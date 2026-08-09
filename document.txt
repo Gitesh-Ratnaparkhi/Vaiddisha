@@ -1,0 +1,78 @@
+PS D:\Vaiddisha> uv init
+PS D:\Vaiddisha> uv myvenv 
+PS D:\Vaiddisha> uv venv
+PS D:\Vaiddisha> .venv\Scripts\activate
+uv pip install -r requirements.txt
+
+
+
+Folder Structure
+Vaiddisha/
+├── .venv/                      # Managed by uv
+├── data/                       # Local SQLite DB location
+│   └── app.db
+│
+├── src/                        # Main Application Package
+│   ├── api/                    # API Route Handlers (FastAPI/Gradio integrations)
+│   │   ├── routes/
+│   │   │   ├── auth.py         # Login / Registration endpoints
+│   │   │   ├── disease.py      # Symptom analysis & prediction endpoints
+│   │   │   ├── doctor.py       # Doctor query endpoints
+│   │   │   ├── symptom.py      # Symptom extraction / parsing
+│   │   │   └── chat.py         # Grok streaming/chat endpoints
+│   │   └── router.py
+│   │
+│   ├── config/                 # Environment & Database Setup
+│   │   ├── config.py           # API keys & app constants
+│   │   └── database.py         # DB connection & session factory
+│   │
+│   ├── llm/                    # Grok / LLM Integration Layer
+│   │   ├── prompt.py           # System prompts & diagnostic templates
+│   │   ├── llm_service.py      # Grok API client (OpenAI wrapper calls)
+│   │   └── parser.py           # Structured JSON output parser
+│   │
+│   ├── ml/                     # ML Backup / Fallback Pipelines
+│   │   ├── model.pkl           # Pre-trained classifier models (if any)
+│   │   ├── encoder.pkl         # Target LabelEncoders / Vectorizers
+│   │   ├── predict.py          # Classical ML prediction pipeline
+│   │   └── preprocessing.py    # Data cleaning & feature vectorization
+│   │
+│   ├── models/                 # Database Models (ORMs / Schemas)
+│   │   ├── user.py             # User & Doctor table structures
+│   │   ├── disease.py          # Disease dictionary tables
+│   │   ├── doctor.py           # Doctor profile & availability tables
+│   │   └── history.py          # Prediction history & logs
+│   │
+│   ├── schemas/                # Data Validation Schemas (Pydantic / Dicts)
+│   │   ├── auth.py
+│   │   ├── disease.py
+│   │   ├── doctor.py
+│   │   └── chat.py
+│   │
+│   ├── services/               # Business Logic Layer
+│   │   ├── disease_service.py  # Orchestrates Grok + ML model pipelines
+│   │   ├── doctor_service.py   # Doctor search & filtering logic
+│   │   ├── auth_service.py     # Password hashing & authentication logic
+│   │   └── recommendation_service.py # Specialty matching
+│   │
+│   ├── utils/                  # Helper Utilities
+│   │   ├── helpers.py
+│   │   ├── security.py         # Password hashing & JWT helper utilities
+│   │   └── logger.py           # Logging handlers
+│   │
+│   ├── ui/                     # Gradio Frontend Interface
+│   │   ├── app.py              # Main Gradio Blocks UI layout
+│   │   ├── patient_view.py     # Symptom predictor tab
+│   │   ├── doctor_view.py      # Doctor dashboard tab
+│   │   └── auth_view.py        # Login/Register tab
+│   │
+│   ├── main.py                 # Application runner / launcher
+│   └── __init__.py
+│
+├── dataset/                    # Raw medical datasets / CSVs
+├── tests/                      # Unit & integration tests
+│
+├── .env                        # Private API Key secrets
+├── .gitignore
+├── pyproject.toml              # Managed by uv
+└── README.md
