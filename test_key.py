@@ -38,7 +38,8 @@ else:
             messages=[{"role": "user", "content": "Hello, respond with 'API KEY WORKING'"}],
             max_tokens=10
         )
-        print("🎉 SUCCESS! Groq API Response:", response.choices[0].message.content.strip())
+        content = response.choices[0].message.content
+        print("🎉 SUCCESS! Groq API Response:", content.strip() if content else "")
     except Exception as e:
         print("❌ API CALL FAILED:")
         print(e)

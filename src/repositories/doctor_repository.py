@@ -6,7 +6,7 @@ class DoctorRepository:
     @staticmethod
     def create_doctor_account(
         email: str,
-        password_hash: bytes,
+        password_hash: str,
         name: str,
         speciality: str,
         qualification: str,
@@ -55,6 +55,16 @@ class DoctorRepository:
         row = cursor.fetchone()
         conn.close()
         return row
+
+    @staticmethod
+    def get_all_doctors() -> list[dict]:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT name, speciality, hospital, email FROM doctors")
+        rows = cursor.fetchall()
+        conn.close()
+        return [dict(row) for row in rows]
+
 
     @staticmethod
     def get_doctors_by_speciality(speciality: str):

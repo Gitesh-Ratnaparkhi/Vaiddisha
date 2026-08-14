@@ -1,97 +1,98 @@
 # src/repositories/database.py
+import os
 import sqlite3
 
-DB_PATH = "vaiddisha.db"
+# Dynamically resolve DB path to project root folder
+DB_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "vaiddisha.db"
+)
+
 
 def get_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+  conn = sqlite3.connect(DB_PATH)
+  conn.row_factory = sqlite3.Row
+  return conn
+
 
 def init_db():
-    conn = get_connection()
-    cursor = conn.cursor()
+  conn = get_connection()
+  cursor = conn.cursor()
 
-    # 1. Base Users Auth Table
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            email TEXT PRIMARY KEY,
-            password_hash BLOB NOT NULL,
-            role TEXT NOT NULL,
-            terms_accepted INTEGER DEFAULT 0
-        )
-    """)
-
-    try:
-        cursor.execute("ALTER TABLE users ADD COLUMN terms_accepted INTEGER DEFAULT 0")
-    except sqlite3.OperationalError:
-        pass
-
-    # 2. Patients Table
-    cursor.execute("""
+  # 1. Patients Table
+  cursor.execute("""
         CREATE TABLE IF NOT EXISTS patients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
+            email TEXT PRIMARY KEY,
+            password TEXT,
+            name TEXT,
             gender TEXT,
             age INTEGER,
             country TEXT,
             state TEXT,
             city TEXT,
-            postal_code TEXT,
+            postal TEXT,
             phone TEXT,
             preferred_language TEXT,
             existing_conditions TEXT,
             previous_surgeries TEXT,
             allergies TEXT,
-            FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE
+            terms_accepted INTEGER DEFAULT 0
         )
     """)
 
-    # 3. Doctors Table (Updated with description)
-    cursor.execute("""
+  # 2. Doctors Table
+  cursor.execute("""
         CREATE TABLE IF NOT EXISTS doctors (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            speciality TEXT NOT NULL,
+            email TEXT PRIMARY KEY,
+            password TEXT,
+            name TEXT,
+            speciality TEXT,
             qualification TEXT,
             experience TEXT,
             hospital TEXT,
             country TEXT,
             state TEXT,
             city TEXT,
-            postal_code TEXT,
+            postal TEXT,
             phone TEXT,
             fee TEXT,
             description TEXT,
-            FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE
+            terms_accepted INTEGER DEFAULT 0
         )
     """)
 
-    # Auto-migration for existing DB
-    try:
-        cursor.execute("ALTER TABLE doctors ADD COLUMN description TEXT")
-    except sqlite3.OperationalError:
-        pass
-
-    # 4. Consultations History Table
-    cursor.execute("""
+  # 3. Consultations History Table
+  cursor.execute("""
         CREATE TABLE IF NOT EXISTS consultations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            patient_email TEXT NOT NULL,
-            patient_name TEXT NOT NULL,
-            symptoms TEXT NOT NULL,
+            patient_email TEXT,
+            patient_name TEXT,
+            symptoms TEXT,
             summary TEXT,
             urgency_level TEXT,
             recommended_specialty TEXT,
-            status TEXT DEFAULT 'Pending',
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (patient_email) REFERENCES users (email)
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
-    conn.commit()
-    conn.close()
+  # 4. Appointments Table
+  cursor.execute("""
+        CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            patient_email TEXT,
+            patient_name TEXT,
+            doctor_email TEXT,
+            doctor_name TEXT,
+            appointment_date TEXT,
+            time_slot TEXT,
+            reason TEXT,
+            status TEXT DEFAULT 'Pending',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
+  conn.commit()
+  conn.close()
+
+
+# Auto-initialize database on module import
 init_db()

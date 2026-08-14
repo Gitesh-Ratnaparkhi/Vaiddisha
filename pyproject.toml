@@ -10,8 +10,14 @@ requires-python = ">=3.12"
 dependencies = [
     "country-state-city>=0.1.0",
     "email-validator>=2.3.0",
+    "fastapi>=0.141.1",
     "faster-whisper>=1.2.1",
+    "groq>=1.6.0",
+    "plotly>=6.9.0",
+    "python-dotenv>=1.2.2",
+    "python-multipart>=0.0.32",
     "reportlab>=5.0.0",
+    "uvicorn>=0.52.3",
 ]
 
 [build-system]
@@ -23,3 +29,5 @@ packages = ["src"]
 
 [tool.pyright]
 extraPaths = ["."]
+venvPath = "."
+venv = ".venv"

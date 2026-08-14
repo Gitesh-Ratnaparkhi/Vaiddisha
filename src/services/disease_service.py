@@ -7,16 +7,19 @@ from src.repositories.patient_repository import patient_repository
 from src.repositories.doctor_repository import doctor_repository
 from src.repositories.consultation_repository import consultation_repository
 from src.utils.pdf_generator import generate_medical_report_pdf
+from src.security import sanitize_text, redact_pii_for_llm, is_potential_prompt_injection
 
 def process_disease_prediction(
     symptoms: str, 
     user_session: dict | None = None, 
     image_file: str | None = None, 
     pdf_file: str | None = None,
-    triage_answers: str = ""
+    triage_answers: str = "",
+    target_language: str = "English"
 ) -> tuple[str, str | None]:
     """
-    Master diagnostic pipeline returning (formatted_markdown, pdf_report_path).
+    Master diagnostic pipeline returning (formatted_markdown, pdf_report_path)
+    with integrated input sanitization, prompt injection defense, and PII redaction.
     """
     if not symptoms or not symptoms.strip():
         return "⚠️ Please enter or record your symptoms before running analysis.", None
@@ -31,15 +34,26 @@ def process_disease_prediction(
             if patient_row:
                 patient_profile = dict(patient_row)
 
+        # 🔒 Security Step 1: Sanitize text input
+        clean_symptoms = sanitize_text(symptoms)
+
+        # 🔒 Security Step 2: Check for prompt injection attempts
+        if is_potential_prompt_injection(clean_symptoms):
+            clean_symptoms = "User entered an invalid or restricted symptom description."
+
+        # 🔒 Security Step 3: Strip accidental PII before sending to external LLM API
+        safe_symptoms = redact_pii_for_llm(clean_symptoms)
+
         # 1. Process Multimodal Attachments
         mm_data = process_multimodal_attachments(image_path=image_file, pdf_path=pdf_file)
-        combined_context_symptoms = symptoms.strip()
+        combined_context_symptoms = safe_symptoms
         if mm_data.extracted_text:
-            combined_context_symptoms += f"\n\n{mm_data.extracted_text}"
+            combined_context_symptoms += f"\n\n{sanitize_text(mm_data.extracted_text)}"
         if mm_data.visual_description:
-            combined_context_symptoms += f"\n\n{mm_data.visual_description}"
+            combined_context_symptoms += f"\n\n{sanitize_text(mm_data.visual_description)}"
         if triage_answers:
-            combined_context_symptoms += f"\n\n📋 [Follow-Up Context]: {triage_answers}"
+            safe_triage = redact_pii_for_llm(sanitize_text(triage_answers))
+            combined_context_symptoms += f"\n\n📋 [Follow-Up Context]: {safe_triage}"
 
         # 2. Retrieve RAG Clinical Guidelines
         guidelines = rag_service.retrieve_guidelines(combined_context_symptoms)
@@ -47,8 +61,12 @@ def process_disease_prediction(
             guidelines_text = "\n".join(guidelines)
             combined_context_symptoms += f"\n\n{guidelines_text}"
 
-        # 3. LLM Diagnostic Inference
-        diagnosis = llm_service.analyze_symptoms(combined_context_symptoms, patient_profile)
+        # 3. LLM Diagnostic Inference (using PII-redacted, sanitized payload)
+        diagnosis = llm_service.analyze_symptoms(
+            combined_context_symptoms, 
+            patient_profile, 
+            target_language=target_language
+        )
 
         # 4. Safety & Allergy Audits
         safety_res = safety_service.check_patient_safety(diagnosis, patient_profile)

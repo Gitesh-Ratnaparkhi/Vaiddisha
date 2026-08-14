@@ -6,30 +6,45 @@ from src.utils.location_helper import (
 )
 
 def render_auth_view():
-    with gr.Column(visible=True) as auth_container:
-        gr.Markdown("### 🔐 Account Access — Sign In or Register")
-        with gr.Row():
-            # LOGIN CARD
-            with gr.Column(scale=1):
-                gr.Markdown("#### 🔑 Sign In")
-                login_email = gr.Textbox(label="Email Address", placeholder="e.g. patient@gmail.com")
-                login_pass = gr.Textbox(label="Password", type="password", placeholder="Enter your password")
-                login_btn = gr.Button("Sign In", variant="primary", elem_classes=["submit-btn"])
-                login_status = gr.Markdown()
+    """Renders an attractive, modern Login and Registration portal with location cascades and smooth hover effects."""
+    with gr.Column(visible=True, elem_classes=["auth-card"]) as auth_container:
+        
+        with gr.Tabs(elem_classes=["tab-nav"]):
+            
+            # --- TAB 1: USER LOGIN ---
+            with gr.TabItem("🔐 Sign In"):
+                gr.Markdown("### Welcome Back to Vaiddisha AI", elem_classes=["auth-title"])
+                gr.Markdown("Sign in to access your diagnostic triage portal and medical history", elem_classes=["auth-subtitle"])
+                
+                with gr.Row():
+                    with gr.Column(scale=1):
+                        login_email = gr.Textbox(
+                            label="Email Address", 
+                            placeholder="e.g. gitesh@gmail.com",
+                            type="email"
+                        )
+                        login_pass = gr.Textbox(
+                            label="Password", 
+                            placeholder="Enter your secure password", 
+                            type="password"
+                        )
+                        login_btn = gr.Button("🚀 Sign In to Portal", variant="primary", elem_classes=["submit-btn"])
+                        login_status = gr.Markdown()
 
-            # REGISTRATION CARD
-            with gr.Column(scale=1):
-                gr.Markdown("#### 📝 Register New Account")
-                with gr.Tabs():
-                    # Patient Tab
-                    with gr.TabItem("Register as Patient"):
-                        p_name = gr.Textbox(label="Full Name*")
-                        p_email = gr.Textbox(label="Email Address*")
-                        p_pass = gr.Textbox(label="Password* (Must be > 8 characters)", type="password")
+            # --- TAB 2: PATIENT REGISTRATION ---
+            with gr.TabItem("🩺 Register as Patient"):
+                gr.Markdown("### Create Patient Account", elem_classes=["auth-title"])
+                gr.Markdown("Join Vaiddisha AI for personalized multi-language health insights", elem_classes=["auth-subtitle"])
+                
+                with gr.Row():
+                    with gr.Column():
+                        p_name = gr.Textbox(label="Full Name*", placeholder="John Doe")
+                        p_email = gr.Textbox(label="Email Address*", placeholder="patient@example.com")
+                        p_pass = gr.Textbox(label="Password* (Must be > 8 characters)", type="password", placeholder="At least 8 characters")
                         
                         with gr.Row():
                             p_age = gr.Number(label="Age", value=25, precision=0)
-                            p_gender = gr.Dropdown(["Male", "Female", "Other"], label="Gender", value="Male")
+                            p_gender = gr.Dropdown(choices=["Male", "Female", "Other"], label="Gender", value="Male")
                         
                         with gr.Row():
                             p_country = gr.Dropdown(choices=ALL_COUNTRIES, label="Country", value=DEFAULT_COUNTRY, filterable=True)
@@ -37,34 +52,41 @@ def render_auth_view():
                         
                         with gr.Row():
                             p_city = gr.Dropdown(choices=INITIAL_CITIES, label="City", value=DEFAULT_CITY, filterable=True)
-                            p_postal = gr.Textbox(label="Postal Code / Zip")
-                        
+                            p_postal = gr.Textbox(label="Postal Code / Zip", value="440001")
+                    
+                    with gr.Column():
                         with gr.Row():
-                            p_phone = gr.Textbox(label="Phone Number")
+                            p_phone = gr.Textbox(label="Phone Number", placeholder="+91 9876543210")
                             p_lang = gr.Textbox(label="Preferred Language", value="English")
                         
-                        p_conditions = gr.Textbox(label="Existing Health Conditions", placeholder="e.g. Diabetes, Hypertension")
-                        p_surgeries = gr.Textbox(label="Previous Surgeries", placeholder="e.g. Appendectomy 2020")
-                        p_allergies = gr.Textbox(label="Allergies", placeholder="e.g. Penicillin, Peanuts")
-                        
-                        p_reg_btn = gr.Button("Register Patient Account", variant="secondary")
-                        p_reg_status = gr.Markdown()
+                        p_conditions = gr.Textbox(label="Existing Health Conditions (Optional)", placeholder="e.g. Asthma, Diabetes")
+                        p_surgeries = gr.Textbox(label="Previous Surgeries (Optional)", placeholder="e.g. Appendectomy 2020")
+                        p_allergies = gr.Textbox(label="Known Allergies (Optional)", placeholder="e.g. Penicillin, Peanuts")
+                
+                p_reg_btn = gr.Button("📝 Create Patient Account", variant="primary", elem_classes=["submit-btn"])
+                p_reg_status = gr.Markdown()
 
-                    # Doctor Tab
-                    with gr.TabItem("Register as Doctor"):
-                        d_name = gr.Textbox(label="Doctor Full Name*")
-                        d_email = gr.Textbox(label="Email Address*")
+            # --- TAB 3: DOCTOR REGISTRATION ---
+            with gr.TabItem("👨‍⚕️ Register as Doctor"):
+                gr.Markdown("### Join Doctor Network", elem_classes=["auth-title"])
+                gr.Markdown("Register your medical practice to receive nearby patient referrals", elem_classes=["auth-subtitle"])
+                
+                with gr.Row():
+                    with gr.Column():
+                        d_name = gr.Textbox(label="Doctor Full Name*", placeholder="Dr. Smith")
+                        d_email = gr.Textbox(label="Email Address*", placeholder="dr.smith@hospital.com")
                         d_pass = gr.Textbox(label="Password* (Must be > 8 characters)", type="password")
                         
                         with gr.Row():
-                            d_spec = gr.Textbox(label="Speciality*", placeholder="e.g. Cardiologist, Dermatologist")
+                            d_spec = gr.Textbox(label="Specialty*", placeholder="e.g. Cardiologist, Dermatologist")
                             d_qual = gr.Textbox(label="Qualification", placeholder="e.g. MBBS, MD")
                         
                         with gr.Row():
                             d_exp = gr.Textbox(label="Experience", placeholder="e.g. 10 Years")
-                            d_fee = gr.Textbox(label="Consultation Fee", placeholder="e.g. $50 / ₹500")
-                        
-                        d_hosp = gr.Textbox(label="Hospital / Clinic Name")
+                            d_fee = gr.Textbox(label="Consultation Fee", placeholder="e.g. ₹500")
+                    
+                    with gr.Column():
+                        d_hosp = gr.Textbox(label="Hospital / Clinic Name", placeholder="City Care Hospital")
                         
                         with gr.Row():
                             d_country = gr.Dropdown(choices=ALL_COUNTRIES, label="Country", value=DEFAULT_COUNTRY, filterable=True)
@@ -72,21 +94,21 @@ def render_auth_view():
                         
                         with gr.Row():
                             d_city = gr.Dropdown(choices=INITIAL_CITIES, label="City", value=DEFAULT_CITY, filterable=True)
-                            d_postal = gr.Textbox(label="Postal Code / Zip")
+                            d_postal = gr.Textbox(label="Postal Code / Zip", value="440001")
                         
-                        d_phone = gr.Textbox(label="Contact Phone Number")
-                        
-                        # Replaced Rating slider with Doctor Description (max 500 words)
-                        d_desc = gr.Textbox(
-                            label="Doctor Professional Bio / Description (Max 500 words)", 
-                            placeholder="Write a brief professional summary, areas of clinical expertise, consultation hours, etc...",
-                            lines=4,
-                            max_lines=8
-                        )
-                        
-                        d_reg_btn = gr.Button("Register Doctor Profile", variant="secondary")
-                        d_reg_status = gr.Markdown()
+                        d_phone = gr.Textbox(label="Contact Phone Number", placeholder="+91 9876543210")
 
+                d_desc = gr.Textbox(
+                    label="Doctor Professional Bio / Description (Max 500 words)", 
+                    placeholder="Write a brief professional summary, areas of clinical expertise, consultation hours, etc...",
+                    lines=3,
+                    max_lines=6
+                )
+                
+                d_reg_btn = gr.Button("👨‍⚕️ Register Doctor Profile", variant="primary", elem_classes=["submit-btn"])
+                d_reg_status = gr.Markdown()
+
+    # --- LOCATION CASCADE EVENT LISTENERS ---
     p_country.change(fn=get_states_for_country, inputs=[p_country], outputs=[p_state, p_city])
     p_state.change(fn=get_cities_for_state, inputs=[p_country, p_state], outputs=[p_city])
 

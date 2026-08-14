@@ -6,7 +6,7 @@ class PatientRepository:
     @staticmethod
     def create_patient_account(
         email: str, 
-        hashed_password: bytes, 
+        hashed_password: str, 
         name: str, 
         gender: str, 
         age: int, 

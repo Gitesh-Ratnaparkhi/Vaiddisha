@@ -1,0 +1,80 @@
+# src/services/lab_analyzer_service.py
+import os
+import base64
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
+
+VISION_SYSTEM_PROMPT = """You are Vaiddisha AI's Senior Clinical Laboratory & Diagnostic Expert.
+Your task is to analyze patient medical lab test documents, blood test panels, imaging summaries, or pathology reports with high accuracy.
+
+INSTRUCTIONS:
+1. Extract the key test parameters (e.g., Hemoglobin, WBC, Fasting Glucose, Cholesterol, Platelets, Creatinine, etc.).
+2. Extract the patient's Observed Value, the Reference Normal Range, and the Unit of Measurement.
+3. Classify each metric into:
+   - 🟢 NORMAL
+   - 🟡 BORDERLINE / SLIGHTLY ELEVATED / SLIGHTLY LOW
+   - 🔴 HIGH / ABNORMAL / CRITICAL
+4. Format your output strictly in rich Markdown with the following sections:
+   - ### 📋 Report Overview & Test Type
+   - ### 📊 Extracted Lab Test Metrics (Table format with columns: Test Name, Result Value, Reference Range, Status)
+   - ### 🔍 Key Clinical Findings & Flagged Abnormalities (Explain out-of-range parameters in simple patient terms)
+   - ### 🩺 Recommended Next Steps & Specialist Consultation (Specialist type to visit, further tests)
+   - ### ⚠️ Clinical Disclaimer
+5. Ensure the entire response is translated into the requested target language.
+"""
+
+def encode_image_to_base64(image_path: str) -> str:
+    """Encodes a local image file to base64 string."""
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+def analyze_medical_document(image_path: str, patient_notes: str = "", target_language: str = "English") -> str:
+    """Analyzes medical lab document image using Groq Vision model."""
+    if not image_path:
+        return "⚠️ Please upload a medical lab report or document image first."
+
+    api_key = os.getenv("GROQ_API_KEY", "").strip()
+    if not api_key:
+        return "❌ Error: GROQ_API_KEY is not configured in your .env file."
+
+    try:
+        client = Groq(api_key=api_key)
+        base64_image = encode_image_to_base64(image_path)
+        
+        # Determine image mime type
+        ext = os.path.splitext(image_path)[-1].lower().replace(".", "")
+        mime_type = f"image/{ext}" if ext in ["png", "jpeg", "jpg", "webp"] else "image/jpeg"
+
+        user_content = [
+            {
+                "type": "text", 
+                "text": f"TARGET OUTPUT LANGUAGE: {target_language}\n"
+                        f"ADDITIONAL PATIENT CONTEXT/NOTES: {patient_notes.strip() if patient_notes else 'None provided'}\n\n"
+                        f"Please examine this attached medical report image thoroughly, extract all parameters, and provide your clinical interpretation."
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:{mime_type};base64,{base64_image}"
+                }
+            }
+        ]
+
+        # Use Groq Vision capable model
+        # pyrefly: ignore [no-matching-overload]
+        response = client.chat.completions.create(
+            model=os.getenv("GROQ_VISION_MODEL", "llama-3.2-11b-vision-preview"),
+            messages=[
+                {"role": "system", "content": VISION_SYSTEM_PROMPT},
+                {"role": "user", "content": user_content}
+            ],
+            temperature=0.1
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        # Fallback explanation if vision preview quotas/limits occur
+        return f"❌ **Error Analyzing Lab Document:** {str(e)}\n\n*Tip: Ensure your file is a clear image (JPG/PNG) and your Groq API key has vision access.*"

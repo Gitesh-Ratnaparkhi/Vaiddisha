@@ -76,3 +76,8 @@ Vaiddisha/
 ├── .gitignore
 ├── pyproject.toml              # Managed by uv
 └── README.md
+
+
+
+
+uv run main.py
