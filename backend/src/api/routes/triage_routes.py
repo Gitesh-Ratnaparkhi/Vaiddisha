@@ -46,3 +46,26 @@ def api_predict_diagnosis(req: DiagnosticPredictionRequest):
         "analysis_markdown": analysis_md,
         "pdf_download_path": pdf_path
     }
+
+from fastapi.responses import FileResponse
+import os
+import tempfile
+
+@router.get("/download")
+def api_download_report(file_path: str):
+    if not file_path:
+        raise HTTPException(status_code=400, detail="File path parameter is required.")
+    
+    normalized_path = os.path.abspath(file_path)
+    if not os.path.exists(normalized_path):
+        raise HTTPException(status_code=404, detail="Requested file not found.")
+        
+    temp_dir = tempfile.gettempdir()
+    if not normalized_path.startswith(os.path.abspath(temp_dir)):
+        raise HTTPException(status_code=403, detail="Access denied. Files can only be downloaded from the secure temporary directory.")
+        
+    return FileResponse(
+        normalized_path,
+        media_type="application/pdf",
+        filename=os.path.basename(normalized_path)
+    )
