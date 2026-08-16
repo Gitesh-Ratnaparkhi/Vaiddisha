@@ -91,7 +91,7 @@ def analyze_medical_document(
             temperature=0.1,
         )
 
-        return response.choices[0].message.content
+        return response.choices[0].message.content or ""
 
     except (InvalidDocumentFormatError, LLMInferenceError, VisionOCRError):
         raise

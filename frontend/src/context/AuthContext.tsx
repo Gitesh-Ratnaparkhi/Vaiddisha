@@ -11,6 +11,7 @@ interface AuthContextType {
     login: (credentials: LoginPayload) => Promise<void>;
     logout: () => void;
     setUserSession: (session: UserSession | null) => void;
+    register: (payload: any) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -63,6 +64,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserSession(null);
     };
 
+    const register = async (payload: any) => {
+        setIsLoading(true);
+        try {
+            if (payload.role === 'doctor') {
+                await authApi.registerDoctor({
+                    email: payload.email,
+                    password: payload.password,
+                    name: payload.name,
+                    speciality: payload.speciality,
+                    qualification: payload.qualification,
+                    hospital: payload.hospital,
+                    fee: payload.fee,
+                    city: payload.city,
+                    experience: '1',
+                });
+            } else {
+                await authApi.registerPatient({
+                    email: payload.email,
+                    password: payload.password,
+                    name: payload.name,
+                    city: payload.city,
+                });
+            }
+
+            // Auto login after registration
+            const response = await authApi.login({
+                email: payload.email,
+                password: payload.password,
+            });
+            if (response && response.session) {
+                setUserSession(response.session);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -72,6 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 login,
                 logout,
                 setUserSession,
+                register,
             }}
         >
             {children}

@@ -1,4 +1,5 @@
 # src/repositories/appointment_repository.py
+from typing import Any
 from src.repositories.database import get_connection
 
 class AppointmentRepository:
@@ -18,23 +19,21 @@ class AppointmentRepository:
         try:
             cursor.execute("""
                 INSERT INTO appointments (
-                    patient_email, patient_name, doctor_email, 
-                    doctor_name, appointment_date, time_slot, reason, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')
+                    patient_email, doctor_email, date, slot, reason, status
+                ) VALUES (%s, %s, %s, %s, %s, 'Pending')
+                RETURNING id
             """, (
                 patient_email.strip().lower(),
-                patient_name.strip(),
                 doctor_email.strip().lower(),
-                doctor_name.strip(),
                 appointment_date.strip(),
                 time_slot.strip(),
                 reason.strip()
             ))
             conn.commit()
-            last_id = cursor.lastrowid
-            if last_id is None:
-                raise ValueError("Failed to create appointment: lastrowid is None")
-            return last_id
+            row: Any = cursor.fetchone()
+            if not row or 'id' not in row:
+                raise ValueError("Failed to create appointment: no id returned")
+            return row['id']
         except Exception as e:
             conn.rollback()
             raise e
@@ -46,10 +45,11 @@ class AppointmentRepository:
         cursor = conn.cursor()
         try:
             cursor.execute("""
-                SELECT id, doctor_name, appointment_date, time_slot, reason, status, created_at
-                FROM appointments
-                WHERE LOWER(patient_email) = ?
-                ORDER BY id DESC
+                SELECT a.id, d.name AS doctor_name, a.date AS appointment_date, a.slot AS time_slot, a.reason, a.status, a.created_at
+                FROM appointments a
+                JOIN doctors d ON a.doctor_email = d.email
+                WHERE LOWER(a.patient_email) = %s
+                ORDER BY a.id DESC
             """, (patient_email.strip().lower(),))
             rows = cursor.fetchall()
             return [dict(r) for r in rows]
@@ -61,10 +61,11 @@ class AppointmentRepository:
         cursor = conn.cursor()
         try:
             cursor.execute("""
-                SELECT id, patient_name, patient_email, appointment_date, time_slot, reason, status, created_at
-                FROM appointments
-                WHERE LOWER(doctor_email) = ?
-                ORDER BY id DESC
+                SELECT a.id, p.name AS patient_name, a.patient_email, a.date AS appointment_date, a.slot AS time_slot, a.reason, a.status, a.created_at
+                FROM appointments a
+                JOIN patients p ON a.patient_email = p.email
+                WHERE LOWER(a.doctor_email) = %s
+                ORDER BY a.id DESC
             """, (doctor_email.strip().lower(),))
             rows = cursor.fetchall()
             return [dict(r) for r in rows]
@@ -77,8 +78,8 @@ class AppointmentRepository:
         try:
             cursor.execute("""
                 UPDATE appointments
-                SET status = ?
-                WHERE id = ?
+                SET status = %s
+                WHERE id = %s
             """, (new_status, appointment_id))
             conn.commit()
             return cursor.rowcount > 0

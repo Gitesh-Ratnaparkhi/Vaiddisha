@@ -1,4 +1,5 @@
 # src/repositories/patient_repository.py
+from typing import Any
 from src.repositories.database import get_connection
 
 class PatientRepository:
@@ -28,7 +29,7 @@ class PatientRepository:
         try:
             # 1. Insert into users table
             cursor.execute(
-                "INSERT INTO users (email, password_hash, role) VALUES (?, ?, ?)", 
+                "INSERT INTO users (email, password_hash, role) VALUES (%s, %s, %s)", 
                 (clean_email, hashed_password, "Patient")
             )
 
@@ -36,8 +37,8 @@ class PatientRepository:
             cursor.execute("""
                 INSERT INTO patients (
                     email, name, gender, age, country, state, city, postal_code, 
-                    phone, preferred_language, existing_conditions, previous_surgeries, allergies
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    phone, language, conditions, surgeries, allergies
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (clean_email, name, gender, age, country, state, city, postal_code, phone, language, conditions, surgeries, allergies))
 
             conn.commit()
@@ -54,8 +55,8 @@ class PatientRepository:
         """Fetches full patient profile using their email."""
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM patients WHERE email = ?", (email.strip().lower(),))
-        row = cursor.fetchone()
+        cursor.execute("SELECT * FROM patients WHERE email = %s", (email.strip().lower(),))
+        row: Any = cursor.fetchone()
         conn.close()
         return row
 

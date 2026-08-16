@@ -4,21 +4,26 @@ import { appointmentApi } from '../api';
 import type { Appointment } from '../types';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../context/ToastContext';
-import { Calendar, CheckCircle2, XCircle, Clock, Check, Ban } from 'lucide-react';
-import { Button } from '../components/common/Button';
+import { Calendar, CheckCircle2, XCircle, Clock, Check, Ban, Plus, RefreshCw } from 'lucide-react';
 
-export default function Appointments() {
+interface AppointmentsProps {
+    onNavigateToDirectory?: () => void;
+}
+
+export default function Appointments({ onNavigateToDirectory }: AppointmentsProps) {
     const { user } = useAuth();
     const { showToast } = useToast();
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const isDoctor = user?.role?.toLowerCase() === 'doctor';
 
     const fetchAppointments = async () => {
         if (!user) return;
         setLoading(true);
         try {
             let res;
-            if (user.role === 'Doctor') {
+            if (isDoctor) {
                 res = await appointmentApi.getDoctorAppointments(user.email);
             } else {
                 res = await appointmentApi.getPatientAppointments(user.email);
@@ -73,29 +78,50 @@ export default function Appointments() {
 
     return (
         <div className="space-y-5">
-            <div className="flex items-center justify-between">
+            {/* Header with Quick Action Buttons */}
+            <div className="flex justify-between items-center mb-6">
                 <div>
                     <h2 className="text-xl font-bold text-slate-900">
-                        {user.role === 'Doctor' ? 'Doctor Appointment Schedule' : 'My Clinical Bookings'}
+                        {isDoctor ? 'Doctor Appointment Schedule' : 'My Clinical Bookings'}
                     </h2>
                     <p className="text-xs text-slate-500">Track and manage upcoming consultations.</p>
                 </div>
-                <Button variant="outline" onClick={fetchAppointments} isLoading={loading}>
-                    Refresh
-                </Button>
+
+                <div className="flex items-center gap-2">
+                    {!isDoctor && onNavigateToDirectory && (
+                        <button
+                            type="button"
+                            onClick={onNavigateToDirectory}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold shadow-xs transition"
+                        >
+                            <Plus className="w-3.5 h-3.5" />
+                            Book New Consultation
+                        </button>
+                    )}
+                    <button
+                        type="button"
+                        onClick={fetchAppointments}
+                        disabled={loading}
+                        className="flex items-center gap-1.5 px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+                </div>
             </div>
 
+            {/* Table */}
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs text-slate-600">
                         <thead className="bg-slate-50 text-slate-700 uppercase font-semibold border-b border-slate-200 text-[11px]">
                             <tr>
                                 <th className="p-4">ID</th>
-                                <th className="p-4">{user.role === 'Doctor' ? 'Patient' : 'Doctor'}</th>
+                                <th className="p-4">{isDoctor ? 'Patient' : 'Doctor'}</th>
                                 <th className="p-4">Date & Slot</th>
                                 <th className="p-4">Reason</th>
                                 <th className="p-4">Status</th>
-                                {user.role === 'Doctor' && <th className="p-4 text-right">Actions</th>}
+                                {isDoctor && <th className="p-4 text-right">Actions</th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -103,7 +129,7 @@ export default function Appointments() {
                                 <tr key={appt.id} className="hover:bg-slate-50/50 transition">
                                     <td className="p-4 font-mono font-medium text-slate-500">#{appt.id}</td>
                                     <td className="p-4 font-semibold text-slate-800">
-                                        {user.role === 'Doctor' ? appt.patient_email : (appt.doctor_name || appt.doctor_email)}
+                                        {isDoctor ? appt.patient_email : (appt.doctor_name || appt.doctor_email)}
                                     </td>
                                     <td className="p-4">
                                         <span className="font-medium text-slate-700">{appt.date}</span>
@@ -111,7 +137,7 @@ export default function Appointments() {
                                     </td>
                                     <td className="p-4 max-w-xs truncate text-slate-500">{appt.reason || 'General checkup'}</td>
                                     <td className="p-4">{getStatusBadge(appt.status)}</td>
-                                    {user.role === 'Doctor' && (
+                                    {isDoctor && (
                                         <td className="p-4 text-right space-x-1.5">
                                             {appt.status === 'Pending' && (
                                                 <>

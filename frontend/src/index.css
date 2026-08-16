@@ -1,10 +1,216 @@
-/* frontend/src/index.css */
 @import "tailwindcss";
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: #f8fafc;
-  color: #0f172a;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+@layer base {
+  body {
+    margin: 0;
+    min-height: 100vh;
+    /* Soft ambient gradient from clean ice-blue/slate to warm neutral slate */
+    background: radial-gradient(at 0% 0%, rgba(204, 251, 241, 0.35) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(224, 242, 254, 0.45) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(240, 253, 250, 0.3) 0px, transparent 60%),
+      #f8fafc;
+    color: #0f172a;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    top: 0px !important;
+    position: static !important;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
+  }
+
+  /* Interactive Clickable Defaults */
+  button,
+  [role="button"],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  .clickable-card {
+    cursor: pointer;
+  }
+}
+
+/* Hide Google Translate top toolbar frame */
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+.VIpgJd-ZVi9od-ORHb-OEVmcd {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Styled Google Translate Dropdown */
+.goog-te-gadget-simple {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 5px 10px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+.goog-te-gadget-simple:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(-1px);
+}
+
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+.goog-te-gadget-simple span {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+/* Smooth Fade & Slide Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Interactive Card Hover Lift & Glow */
+.card-hover-effect {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(13, 148, 136, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  border-color: #99f6e4;
+}
+
+/* Smooth Input Focus Rings */
+.input-focus-effect {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-focus-effect:focus {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+/* Real-Time Audio Visualizer Equalizer Bars */
+@keyframes soundWave {
+
+  0%,
+  100% {
+    height: 4px;
+    opacity: 0.5;
+  }
+
+  50% {
+    height: 18px;
+    opacity: 1;
+  }
+}
+
+.wave-bar {
+  width: 3px;
+  border-radius: 9999px;
+  background-color: #e11d48;
+  animation: soundWave 1.2s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.wave-bar:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.wave-bar:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+.wave-bar:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.wave-bar:nth-child(6) {
+  animation-delay: 0.4s;
+}
+
+.wave-bar:nth-child(7) {
+  animation-delay: 0.2s;
+}
+
+/* OCR Laser Scanning Animation */
+@keyframes scanLaser {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+
+  50% {
+    top: 96%;
+    opacity: 1;
+  }
+
+  100% {
+    top: 0%;
+    opacity: 0.8;
+  }
+}
+
+.animate-scan-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #0d9488, #14b8a6, #2dd4bf, transparent);
+  box-shadow: 0 0 15px 3px rgba(20, 184, 166, 0.7);
+  animation: scanLaser 2.5s ease-in-out infinite;
+}
+
+/* Ambient Float & Glowing Orb Animations */
+@keyframes floatSlow {
+
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
 }

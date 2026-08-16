@@ -1,4 +1,5 @@
 # src/repositories/user_repository.py
+from typing import Any
 from src.repositories.database import get_connection
 
 class UserRepository:
@@ -13,10 +14,10 @@ class UserRepository:
         clean_email = email.strip().lower()
         
         cursor.execute(
-            "SELECT email, password_hash, role, terms_accepted FROM users WHERE email = ?", 
+            "SELECT email, password_hash, role, terms_accepted FROM users WHERE email = %s", 
             (clean_email,)
         )
-        row = cursor.fetchone()
+        row: Any = cursor.fetchone()
         conn.close()
         return row
 
@@ -27,7 +28,7 @@ class UserRepository:
         cursor = conn.cursor()
         clean_email = email.strip().lower()
         
-        cursor.execute("UPDATE users SET terms_accepted = 1 WHERE email = ?", (clean_email,))
+        cursor.execute("UPDATE users SET terms_accepted = TRUE WHERE email = %s", (clean_email,))
         conn.commit()
         rows_affected = cursor.rowcount
         conn.close()
@@ -46,7 +47,7 @@ class UserRepository:
         cursor = conn.cursor()
         clean_email = email.strip().lower()
         
-        cursor.execute("DELETE FROM users WHERE email = ?", (clean_email,))
+        cursor.execute("DELETE FROM users WHERE email = %s", (clean_email,))
         conn.commit()
         rows_affected = cursor.rowcount
         conn.close()

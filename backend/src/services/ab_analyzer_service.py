@@ -73,7 +73,7 @@ def analyze_medical_document(image_path: str, patient_notes: str = "", target_la
             temperature=0.1
         )
 
-        return response.choices[0].message.content
+        return response.choices[0].message.content or ""
 
     except Exception as e:
         # Fallback explanation if vision preview quotas/limits occur

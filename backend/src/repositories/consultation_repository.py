@@ -1,5 +1,4 @@
 # src/repositories/consultation_repository.py
-import sqlite3
 from src.repositories.database import get_connection
 
 class ConsultationRepository:
@@ -25,7 +24,7 @@ class ConsultationRepository:
                     summary, 
                     urgency_level, 
                     recommended_specialty
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                ) VALUES (%s, %s, %s, %s, %s, %s)
             """, (
                 patient_email.strip().lower(),
                 patient_name.strip(),
@@ -50,7 +49,7 @@ class ConsultationRepository:
                 """
                 SELECT id, symptoms, summary, urgency_level, recommended_specialty, created_at
                 FROM consultations
-                WHERE LOWER(patient_email) = ?
+                WHERE LOWER(patient_email) = %s
                 ORDER BY id DESC
                 """,
                 (patient_email.strip().lower(),)

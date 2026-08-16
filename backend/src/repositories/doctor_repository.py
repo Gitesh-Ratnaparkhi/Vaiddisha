@@ -1,4 +1,5 @@
 # src/repositories/doctor_repository.py
+from typing import Any
 from src.repositories.database import get_connection
 
 class DoctorRepository:
@@ -26,7 +27,7 @@ class DoctorRepository:
 
         # Insert user login credentials
         cursor.execute(
-            "INSERT INTO users (email, password_hash, role, terms_accepted) VALUES (?, ?, ?, 0)",
+            "INSERT INTO users (email, password_hash, role, terms_accepted) VALUES (%s, %s, %s, FALSE)",
             (clean_email, password_hash, "Doctor")
         )
 
@@ -35,7 +36,7 @@ class DoctorRepository:
             INSERT INTO doctors (
                 email, name, speciality, qualification, experience, hospital,
                 country, state, city, postal_code, phone, fee, description
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             clean_email, name.strip(), speciality.strip(), qualification.strip(),
             experience.strip(), hospital.strip(), country.strip(), state.strip(),
@@ -51,8 +52,8 @@ class DoctorRepository:
         cursor = conn.cursor()
         clean_email = email.strip().lower()
 
-        cursor.execute("SELECT * FROM doctors WHERE email = ?", (clean_email,))
-        row = cursor.fetchone()
+        cursor.execute("SELECT * FROM doctors WHERE email = %s", (clean_email,))
+        row: Any = cursor.fetchone()
         conn.close()
         return row
 
@@ -70,7 +71,7 @@ class DoctorRepository:
     def get_doctors_by_speciality(speciality: str):
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM doctors WHERE LOWER(speciality) = ?", (speciality.strip().lower(),))
+        cursor.execute("SELECT * FROM doctors WHERE LOWER(speciality) = %s", (speciality.strip().lower(),))
         rows = cursor.fetchall()
         conn.close()
         return [dict(row) for row in rows]
@@ -80,7 +81,7 @@ class DoctorRepository:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM doctors WHERE LOWER(city) = ? AND LOWER(speciality) = ?",
+            "SELECT * FROM doctors WHERE LOWER(city) = %s AND LOWER(speciality) = %s",
             (city.strip().lower(), speciality.strip().lower())
         )
         rows = cursor.fetchall()

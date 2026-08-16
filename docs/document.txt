@@ -1,83 +1,100 @@
-PS D:\Vaiddisha> uv init
-PS D:\Vaiddisha> uv myvenv 
-PS D:\Vaiddisha> uv venv
-PS D:\Vaiddisha> .venv\Scripts\activate
-uv pip install -r requirements.txt
-
-
-
-Folder Structure
-Vaiddisha/
-├── .venv/                      # Managed by uv
-├── data/                       # Local SQLite DB location
-│   └── app.db
+Vaiddisha AI: Clinical Decision-Support & Doctor Recommendation PlatformVaiddisha AI is an intelligent full-stack clinical decision-support and doctor consultation management system. The platform integrates multi-turn AI symptom triage, vision-based OCR lab report analysis, specialist doctor matching, and appointment scheduling.1. Updated Project Folder StructureThe project is architected as a decoupled client-server application featuring a FastAPI backend integrated with PostgreSQL and Groq AI, paired with a React + TypeScript + Vite frontend:PlaintextVaiddisha/
+├── backend/
+│   ├── data/                           # Local fallback SQLite / sample asset files
+│   │   └── vaiddisha.db
+│   ├── src/
+│   │   ├── api/                        # FastAPI Route Handlers & Controllers
+│   │   │   ├── routes/
+│   │   │   │   ├── auth.py             # User & Doctor registration/login endpoints
+│   │   │   │   ├── triage.py           # Symptom triage & AI diagnostic assessment
+│   │   │   │   ├── doctors.py          # Doctor directory, search, and filtering
+│   │   │   │   ├── appointments.py     # Patient booking & doctor status management
+│   │   │   │   └── lab.py              # Vision OCR report analysis endpoints
+│   │   │   └── router.py               # Main API v1 router aggregator
+│   │   ├── repositories/               # Data Access Layer (DAL) & PostgreSQL Queries
+│   │   │   ├── database.py             # PostgreSQL connection pool & table initializers
+│   │   │   ├── user_repository.py      # Users & credentials SQL persistence
+│   │   │   ├── patient_repository.py   # Patient profiles & medical history SQL queries
+│   │   │   ├── doctor_repository.py    # Doctor profile & availability queries
+│   │   │   └── appointment_repository.py # Appointment booking & lifecycle status queries
+│   │   ├── services/                   # Business Logic & AI Integrations
+│   │   │   ├── llm_service.py          # Groq API client & clinical prompt templates
+│   │   │   ├── vision_service.py       # Vision OCR lab report extraction pipeline
+│   │   │   ├── recommendation_service.py # Specialty matching & physician mapping
+│   │   │   └── pdf_service.py          # Clinical diagnostic summary PDF generation
+│   │   ├── schemas/                    # Pydantic Schemas & Request/Response Models
+│   │   │   ├── auth.py
+│   │   │   ├── triage.py
+│   │   │   ├── doctor.py
+│   │   │   ├── appointment.py
+│   │   │   └── lab.py
+│   │   └── utils/                      # Helper Utilities & Security
+│   │       ├── security.py             # Password hashing (bcrypt) & auth tokens
+│   │       └── logger.py               # Structured application logging
+│   ├── main.py                         # FastAPI App Entrypoint, CORS & Server Bootstrap
+│   ├── .env                            # Environment secrets (DATABASE_URL, GROQ_API_KEY)
+│   ├── .gitignore
+│   └── pyproject.toml                  # Managed by uv
 │
-├── src/                        # Main Application Package
-│   ├── api/                    # API Route Handlers (FastAPI/Gradio integrations)
-│   │   ├── routes/
-│   │   │   ├── auth.py         # Login / Registration endpoints
-│   │   │   ├── disease.py      # Symptom analysis & prediction endpoints
-│   │   │   ├── doctor.py       # Doctor query endpoints
-│   │   │   ├── symptom.py      # Symptom extraction / parsing
-│   │   │   └── chat.py         # Grok streaming/chat endpoints
-│   │   └── router.py
-│   │
-│   ├── config/                 # Environment & Database Setup
-│   │   ├── config.py           # API keys & app constants
-│   │   └── database.py         # DB connection & session factory
-│   │
-│   ├── llm/                    # Grok / LLM Integration Layer
-│   │   ├── prompt.py           # System prompts & diagnostic templates
-│   │   ├── llm_service.py      # Grok API client (OpenAI wrapper calls)
-│   │   └── parser.py           # Structured JSON output parser
-│   │
-│   ├── ml/                     # ML Backup / Fallback Pipelines
-│   │   ├── model.pkl           # Pre-trained classifier models (if any)
-│   │   ├── encoder.pkl         # Target LabelEncoders / Vectorizers
-│   │   ├── predict.py          # Classical ML prediction pipeline
-│   │   └── preprocessing.py    # Data cleaning & feature vectorization
-│   │
-│   ├── models/                 # Database Models (ORMs / Schemas)
-│   │   ├── user.py             # User & Doctor table structures
-│   │   ├── disease.py          # Disease dictionary tables
-│   │   ├── doctor.py           # Doctor profile & availability tables
-│   │   └── history.py          # Prediction history & logs
-│   │
-│   ├── schemas/                # Data Validation Schemas (Pydantic / Dicts)
-│   │   ├── auth.py
-│   │   ├── disease.py
-│   │   ├── doctor.py
-│   │   └── chat.py
-│   │
-│   ├── services/               # Business Logic Layer
-│   │   ├── disease_service.py  # Orchestrates Grok + ML model pipelines
-│   │   ├── doctor_service.py   # Doctor search & filtering logic
-│   │   ├── auth_service.py     # Password hashing & authentication logic
-│   │   └── recommendation_service.py # Specialty matching
-│   │
-│   ├── utils/                  # Helper Utilities
-│   │   ├── helpers.py
-│   │   ├── security.py         # Password hashing & JWT helper utilities
-│   │   └── logger.py           # Logging handlers
-│   │
-│   ├── ui/                     # Gradio Frontend Interface
-│   │   ├── app.py              # Main Gradio Blocks UI layout
-│   │   ├── patient_view.py     # Symptom predictor tab
-│   │   ├── doctor_view.py      # Doctor dashboard tab
-│   │   └── auth_view.py        # Login/Register tab
-│   │
-│   ├── main.py                 # Application runner / launcher
-│   └── __init__.py
-│
-├── dataset/                    # Raw medical datasets / CSVs
-├── tests/                      # Unit & integration tests
-│
-├── .env                        # Private API Key secrets
-├── .gitignore
-├── pyproject.toml              # Managed by uv
-└── README.md
-
-
-
-
-uv run main.py
+└── frontend/
+    ├── src/
+    │   ├── api/                        # Centralized Axios / Fetch Network Layer
+    │   │   ├── client.ts               # Base Axios client & interceptors
+    │   │   ├── auth.api.ts             # Auth endpoints
+    │   │   ├── triage.api.ts           # Triage & symptom checker endpoints
+    │   │   ├── doctor.api.ts           # Specialist lookup endpoints
+    │   │   ├── appointment.api.ts      # Appointment scheduling endpoints
+    │   │   └── lab.api.ts              # OCR lab analysis endpoints
+    │   ├── components/                 # Atomic & Reusable Component Library
+    │   │   ├── common/                 # Base UI atoms (Button, Input, AuthModal)
+    │   │   ├── medical/                # Healthcare widgets (DoctorCard, UrgencyBadge, SafetyBanner)
+    │   │   └── layout/                 # Layout framing (Navbar, Footer)
+    │   ├── context/                    # React Context Global State Providers
+    │   │   ├── AuthContext.tsx         # User authentication & role management
+    │   │   └── ToastContext.tsx        # System alerts & notifications
+    │   ├── hooks/                      # Custom React Hooks (useAuth, useToast)
+    │   ├── pages/                      # Main Single-Page Feature Views
+    │   │   ├── SymptomChecker.tsx      # Multi-turn symptom triage & diagnostic results
+    │   │   ├── LabAnalyzer.tsx         # Image upload & Vision OCR marker extraction
+    │   │   ├── DoctorDirectory.tsx     # Specialist directory, filtering & booking modal
+    │   │   └── Appointments.tsx        # Patient tracking & doctor triage dashboard
+    │   ├── types/                      # TypeScript Interfaces & Domain Definitions
+    │   │   ├── auth.types.ts
+    │   │   ├── diagnosis.types.ts
+    │   │   ├── appointment.types.ts
+    │   │   └── lab.types.ts
+    │   ├── App.tsx                     # Top-level shell layout & tab routing
+    │   └── main.tsx                    # React DOM root entrypoint & provider mounting
+    ├── package.json
+    ├── tsconfig.json
+    └── vite.config.ts                  # Vite Bundler Configuration
+2. Core Functional ModulesModuleCore FunctionalityPrimary Tech StackAuthentication & RBACRole-based authentication (Patient vs. Doctor) with hashed credentials and session persistence.FastAPI, PostgreSQL (users, patients, doctors), React AuthContextAI Symptom TriageDynamic multi-turn follow-up clinical questions, urgency rating (Low, Moderate, High, Emergency), safety alerts, and downloadable PDF reports.Groq LLM API, Pydantic, ReportLab/FPDFVision OCR Lab AnalyzerExtraction of biomarkers, numerical test values, and reference ranges from uploaded pathology images.Vision OCR Pipeline, Groq Vision ModelsSpecialist MatchingAutomated recommendation matching predicted conditions with medical specialties (e.g., Cardiology, Dermatology) filtered by city.PostgreSQL parameterized search (ILIKE)Appointment LifecycleEnd-to-end booking flow from initial patient request (Pending) to doctor approval (Confirmed / Rejected / Completed).PostgreSQL (appointments), REST API3. Database Schema Overview (PostgreSQL)Plaintext+------------------+       +-------------------+       +---------------------+
+|      users       |       |     patients      |       |       doctors       |
++------------------+       +-------------------+       +---------------------+
+| email (PK)       | <---+ | email (PK, FK)    |   +-> | email (PK, FK)      |
+| password_hash    |     | | name              |   |   | name                |
+| role             |     | | age, gender       |   |   | speciality, hospital|
+| terms_accepted   |     | | medical_history   |   |   | city, state, fee    |
+| created_at       |     | | allergies         |   |   | phone, experience   |
++------------------+     | +-------------------+   |   +---------------------+
+                         |                         |
+                         +------------+------------+
+                                      |
+                         +------------v------------+
+                         |      appointments       |
+                         +-------------------------+
+                         | id (PK, SERIAL)         |
+                         | patient_email (FK)      |
+                         | doctor_email (FK)       |
+                         | date, slot, reason      |
+                         | status (Pending/etc)    |
+                         | created_at              |
+                         +-------------------------+
+4. Setup & Execution InstructionsPrerequisitesPython 3.11+ with uv installedNode.js 18+ and npmRunning PostgreSQL instance with database vaiddisha_dbBackend SetupNavigate to the backend directory:PowerShellcd D:\Vaiddisha\backend
+Configure .env:Code snippetDATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/vaiddisha_db
+GROQ_API_KEY=your_groq_api_key
+Start the FastAPI server using uv:PowerShelluv run python main.py
+The API server will start at [http://127.0.0.1:7861](http://127.0.0.1:7861)Interactive Swagger documentation is available at [http://127.0.0.1:7861/docs](http://127.0.0.1:7861/docs)Frontend SetupNavigate to the frontend directory:PowerShellcd D:\Vaiddisha\frontend
+Install dependencies:PowerShellnpm install
+Launch the Vite development server:PowerShellnpm run dev
+The web application will be accessible at `
