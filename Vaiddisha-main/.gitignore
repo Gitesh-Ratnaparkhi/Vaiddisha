@@ -1,0 +1,20 @@
+# Sensitive keys & env files
+.env
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Database files
+vaiddisha.db
+*.db
+*.sqlite3
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+
+# Audio & PDF temp files
+*.wav
+*.pdf
