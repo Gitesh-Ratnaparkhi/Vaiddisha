@@ -61,12 +61,31 @@ class AppointmentRepository:
         cursor = conn.cursor()
         try:
             cursor.execute("""
-                SELECT a.id, p.name AS patient_name, a.patient_email, a.date AS appointment_date, a.slot AS time_slot, a.reason, a.status, a.created_at
+                SELECT a.id, d.name AS doctor_name, a.doctor_email,
+                       p.name AS patient_name, a.patient_email,
+                       a.date AS appointment_date, a.slot AS time_slot,
+                       a.reason, a.status, a.created_at
                 FROM appointments a
                 JOIN patients p ON a.patient_email = p.email
-                WHERE LOWER(a.doctor_email) = %s
+                JOIN doctors d ON a.doctor_email = d.email
+                JOIN doctors logged_in_doctor
+                  ON LOWER(logged_in_doctor.email) = LOWER(%s)
+                WHERE LOWER(a.doctor_email) = LOWER(%s)
+                   OR (
+                       NOT EXISTS (
+                           SELECT 1
+                           FROM appointments direct_appointment
+                           WHERE LOWER(direct_appointment.doctor_email) = LOWER(%s)
+                       )
+                       AND LOWER(REGEXP_REPLACE(TRIM(d.name), '^dr\\.?\\s+', '', 'i')) =
+                           LOWER(REGEXP_REPLACE(TRIM(logged_in_doctor.name), '^dr\\.?\\s+', '', 'i'))
+                   )
                 ORDER BY a.id DESC
-            """, (doctor_email.strip().lower(),))
+            """, (
+                doctor_email.strip(),
+                doctor_email.strip(),
+                doctor_email.strip(),
+            ))
             rows = cursor.fetchall()
             return [dict(r) for r in rows]
         finally:
