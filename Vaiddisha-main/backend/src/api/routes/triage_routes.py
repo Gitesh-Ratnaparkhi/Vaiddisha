@@ -9,6 +9,7 @@ router = APIRouter(prefix="/triage", tags=["2. Diagnostic Triage & Disease Predi
 
 class TriageQuestionsRequest(BaseModel):
     symptoms: str
+    target_language: str = "English"
 
 class DiagnosticPredictionRequest(BaseModel):
     symptoms: str
@@ -21,7 +22,7 @@ def api_generate_questions(req: TriageQuestionsRequest):
     if not req.symptoms.strip():
         raise HTTPException(status_code=400, detail="Symptoms text cannot be empty.")
     
-    triage_state = generate_triage_questions(req.symptoms)
+    triage_state = generate_triage_questions(req.symptoms, req.target_language)
     return {
         "status": "success",
         "symptoms": req.symptoms,

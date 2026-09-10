@@ -3,6 +3,7 @@ import { apiClient } from './client';
 
 export interface TriageQuestionsPayload {
     symptoms: string;
+    target_language?: string;
 }
 
 export interface PredictDiagnosisPayload {

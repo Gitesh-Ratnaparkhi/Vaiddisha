@@ -1,5 +1,5 @@
 // frontend/src/pages/SymptomChecker.tsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { triageApi, API_BASE_URL } from '../api';
@@ -10,6 +10,7 @@ import type { DoctorProfile } from '../types';
 import { Button } from '../components/common/Button';
 import { WelcomeHero } from '../components/common/WelcomeHero';
 import { TestimonialsSection } from '../components/common/TestimonialsSection';
+import { APP_LANGUAGES } from '../constants/languages';
 import {
     Stethoscope,
     ArrowRight,
@@ -24,7 +25,6 @@ import {
     Globe,
     Mic,
     Square,
-    Volume2,
     Building2,
     MapPin,
     Star,
@@ -32,14 +32,16 @@ import {
 } from 'lucide-react';
 
 export const SymptomChecker: React.FC = () => {
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const { user } = useAuth();
     const { showToast } = useToast();
 
     // Step state: 'input' | 'questions' | 'result'
     const [step, setStep] = useState<'input' | 'questions' | 'result'>('input');
     const [symptoms, setSymptoms] = useState('');
-    const [targetLanguage, setTargetLanguage] = useState(i18n.language === 'hi' ? 'Hindi' : 'English');
+    const [targetLanguage, setTargetLanguage] = useState<string>(
+        APP_LANGUAGES.find(language => language.code === i18n.language)?.reportName || 'English'
+    );
     const [questions, setQuestions] = useState<TriageQuestion[]>([]);
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
@@ -56,18 +58,6 @@ export const SymptomChecker: React.FC = () => {
     const audioContextRef = useRef<AudioContext | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const animationFrameRef = useRef<number | null>(null);
-
-    // Keep target report language synced when global i18n changes
-    useEffect(() => {
-        setTargetLanguage(i18n.language === 'hi' ? 'Hindi' : 'English');
-    }, [i18n.language]);
-
-    const languages = [
-        { code: 'en', name: 'English (English)', langLabel: 'English', speechLang: 'en-IN' },
-        { code: 'hi', name: 'हिंदी (Hindi)', langLabel: 'Hindi', speechLang: 'hi-IN' },
-        { code: 'mr', name: 'मराठी (Marathi)', langLabel: 'Marathi', speechLang: 'mr-IN' },
-        { code: 'es', name: 'Español (Spanish)', langLabel: 'Spanish', speechLang: 'es-ES' }
-    ];
 
     const handleLanguageSelect = (langCode: string, langName: string) => {
         i18n.changeLanguage(langCode);
@@ -132,7 +122,7 @@ export const SymptomChecker: React.FC = () => {
             checkVolume();
 
             // Setup Speech Recognition
-            const currentLangObj = languages.find(l => l.code === i18n.language) || languages[0];
+            const currentLangObj = APP_LANGUAGES.find(l => l.code === i18n.language) || APP_LANGUAGES[0];
             const recognition = new SpeechRecognition();
             recognition.lang = currentLangObj.speechLang;
             recognition.continuous = true;
@@ -140,7 +130,7 @@ export const SymptomChecker: React.FC = () => {
 
             recognition.onstart = () => {
                 setIsListening(true);
-                showToast(`Listening in ${currentLangObj.langLabel}... Speak now`, 'info');
+                showToast(`Listening in ${currentLangObj.reportName}... Speak now`, 'info');
             };
 
             recognition.onresult = (event: any) => {
@@ -201,7 +191,7 @@ export const SymptomChecker: React.FC = () => {
 
         setLoading(true);
         try {
-            const res = await triageApi.getQuestions({ symptoms });
+            const res = await triageApi.getQuestions({ symptoms, target_language: targetLanguage });
             if (res.questions && res.questions.length > 0) {
                 setQuestions(res.questions);
                 const initialAnswers: Record<string, string> = {};
@@ -386,16 +376,16 @@ export const SymptomChecker: React.FC = () => {
                                     <select
                                         value={i18n.language}
                                         onChange={(e) => {
-                                            const selected = languages.find(l => l.code === e.target.value);
+                                            const selected = APP_LANGUAGES.find(l => l.code === e.target.value);
                                             if (selected) {
-                                                handleLanguageSelect(selected.code, selected.langLabel);
+                                                handleLanguageSelect(selected.code, selected.reportName);
                                             }
                                         }}
                                         className="w-full p-2.5 border border-slate-200 bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none cursor-pointer"
                                     >
-                                        {languages.map((lang) => (
+                                        {APP_LANGUAGES.map((lang) => (
                                             <option key={lang.code} value={lang.code}>
-                                                {lang.name}
+                                                {lang.name} ({lang.reportName})
                                             </option>
                                         ))}
                                     </select>

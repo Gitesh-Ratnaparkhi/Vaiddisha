@@ -7,6 +7,39 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+
+def _register_multilingual_font(target_language: str = "English") -> tuple[str, str, str]:
+    """Register a local Unicode font and return regular, bold, and italic names."""
+    is_urdu = target_language.lower() == "urdu"
+    regular_name = "VaiddishaArabic" if is_urdu else "VaiddishaNirmala"
+    bold_name = regular_name
+    italic_name = regular_name
+
+    if regular_name in pdfmetrics.getRegisteredFontNames():
+        return regular_name, bold_name, italic_name
+
+    font_paths = [
+        os.path.join(
+            os.environ.get("WINDIR", "C:\\Windows"),
+            "Fonts",
+            "arial.ttf" if is_urdu else "Nirmala.ttc",
+        ),
+        os.path.join(os.path.dirname(__file__), "fonts", "Nirmala.ttf"),
+    ]
+    font_path = next((path for path in font_paths if os.path.exists(path)), None)
+    if not font_path:
+        return "Helvetica", "Helvetica-Bold", "Helvetica-Oblique"
+
+    try:
+        font_kwargs = {"subfontIndex": 0} if font_path.lower().endswith(".ttc") else {}
+        pdfmetrics.registerFont(TTFont(regular_name, font_path, **font_kwargs))
+        return regular_name, regular_name, regular_name
+    except Exception as exc:
+        print(f"[PDF Font Warning]: Unable to load multilingual font: {exc}")
+        return "Helvetica", "Helvetica-Bold", "Helvetica-Oblique"
 
 def generate_medical_report_pdf(
     patient_name: str,
@@ -17,6 +50,7 @@ def generate_medical_report_pdf(
     safety_res,
     age: int | str | None = None,
     gender: str | None = None,
+    target_language: str = "English",
 ) -> str:
     """
     Generates an official, formatted PDF clinical report and returns the local file path.
@@ -35,6 +69,7 @@ def generate_medical_report_pdf(
     )
 
     styles = getSampleStyleSheet()
+    regular_font, bold_font, italic_font = _register_multilingual_font(target_language)
     
     # Palette Definition
     PRIMARY_COLOR = colors.HexColor("#0f172a")    # Slate Dark
@@ -46,7 +81,7 @@ def generate_medical_report_pdf(
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=20,
         textColor=PRIMARY_COLOR,
         leading=24,
@@ -56,7 +91,7 @@ def generate_medical_report_pdf(
     subtitle_style = ParagraphStyle(
         'DocSubtitle',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=regular_font,
         fontSize=10,
         leading=14,
         textColor=TEAL_COLOR,
@@ -66,7 +101,7 @@ def generate_medical_report_pdf(
     section_heading = ParagraphStyle(
         'SectionHeading',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=11,
         textColor=PRIMARY_COLOR,
         spaceBefore=12,
@@ -76,7 +111,7 @@ def generate_medical_report_pdf(
     body_style = ParagraphStyle(
         'BodyText',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=regular_font,
         fontSize=9,
         leading=13,
         textColor=TEXT_COLOR,
@@ -86,7 +121,7 @@ def generate_medical_report_pdf(
     alert_style = ParagraphStyle(
         'AlertText',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=bold_font,
         fontSize=9,
         leading=13,
         textColor=ALERT_COLOR,
@@ -192,7 +227,7 @@ def generate_medical_report_pdf(
     disclaimer_style = ParagraphStyle(
         'Disclaimer', 
         parent=styles['Normal'], 
-        fontName='Helvetica-Oblique', 
+        fontName=italic_font, 
         fontSize=7, 
         leading=10, 
         textColor=colors.HexColor("#64748b")

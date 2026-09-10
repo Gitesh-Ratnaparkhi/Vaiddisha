@@ -4,7 +4,13 @@ LANGUAGES = {
     "English": "en",
     "Hindi (हिन्दी)": "hi",
     "Marathi (मराठी)": "mr",
-    "Spanish (Español)": "es"
+    "Bengali (বাংলা)": "bn",
+    "Telugu (తెలుగు)": "te",
+    "Tamil (தமிழ்)": "ta",
+    "Gujarati (ગુજરાતી)": "gu",
+    "Kannada (ಕನ್ನಡ)": "kn",
+    "Urdu (اردو)": "ur",
+    "Punjabi (ਪੰਜਾਬੀ)": "pa"
 }
 
 UI_STRINGS = {

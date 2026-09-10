@@ -1,7 +1,9 @@
 // frontend/src/components/layout/Navbar.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { User, LogOut, ChevronDown, ShieldCheck, Stethoscope } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { APP_LANGUAGES } from '../../constants/languages';
+import { User, LogOut, ChevronDown, ShieldCheck, Stethoscope, Globe } from 'lucide-react';
 
 export type TabType = 'triage' | 'lab' | 'doctors' | 'appointments' | 'profile';
 
@@ -12,6 +14,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
     const { user, logout } = useAuth();
+    const { i18n } = useTranslation();
     const isDoctor = user?.role?.toLowerCase() === 'doctor';
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -96,7 +99,33 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
                 {/* Right: Translate & Profile Dropdown */}
                 <div className="flex items-center gap-3">
-                    <div id="google_translate_element" className="notranslate-icon text-xs"></div>
+                    <label className="flex items-center gap-1.5 text-xs text-slate-500" title="Website language">
+                        <Globe className="w-3.5 h-3.5" />
+                        <select
+                            aria-label="Website language"
+                            value={i18n.language}
+                            onChange={(event) => {
+                                const languageCode = event.target.value;
+                                i18n.changeLanguage(languageCode);
+                                localStorage.setItem('app_lang', languageCode);
+
+                                if (languageCode === 'en') {
+                                    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                                } else {
+                                    document.cookie = `googtrans=/en/${languageCode}; path=/`;
+                                }
+                                window.location.reload();
+                            }}
+                            className="max-w-[108px] border border-slate-200 rounded-lg bg-white px-2 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-teal-500"
+                        >
+                            {APP_LANGUAGES.map((language) => (
+                                <option key={language.code} value={language.code}>
+                                    {language.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <div id="google_translate_element" className="hidden" aria-hidden="true"></div>
 
                     {/* Profile Dropdown Menu */}
                     <div className="relative" ref={dropdownRef}>

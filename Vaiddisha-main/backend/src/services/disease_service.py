@@ -151,6 +151,7 @@ def process_disease_prediction(
             safety_res=safety_res,
             age=report_age,
             gender=report_gender,
+            target_language=target_language,
         )
 
         formatted_md = _format_ui_markdown(diagnosis, doctors, safety_res)

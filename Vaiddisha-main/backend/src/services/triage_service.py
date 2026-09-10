@@ -7,6 +7,8 @@ from src.schemas import TriageQuestion, TriageState
 TRIAGE_PROMPT_TEMPLATE = """You are a clinical triage assistant.
 A patient presents with the following initial symptoms: "{symptoms}"
 
+Write every question and option in {target_language}.
+
 Generate 2 to 3 targeted, clinical clarifying follow-up questions to narrow down the diagnosis (e.g., onset duration, pain scale, fever degree, aggravating factors).
 
 OUTPUT STRICTLY IN THIS JSON FORMAT:
@@ -26,12 +28,12 @@ OUTPUT STRICTLY IN THIS JSON FORMAT:
 }}
 """
 
-def generate_triage_questions(symptoms: str) -> TriageState:
+def generate_triage_questions(symptoms: str, target_language: str = "English") -> TriageState:
     """Analyzes initial symptoms and returns structured follow-up questions."""
     if not symptoms or len(symptoms.strip()) < 5:
         return TriageState(initial_symptoms=symptoms, is_complete=True)
 
-    prompt = TRIAGE_PROMPT_TEMPLATE.format(symptoms=symptoms)
+    prompt = TRIAGE_PROMPT_TEMPLATE.format(symptoms=symptoms, target_language=target_language)
     try:
         # pyrefly: ignore [no-matching-overload]
         response = llm_service.client.chat.completions.create(
