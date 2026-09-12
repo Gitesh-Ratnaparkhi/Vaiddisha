@@ -12,6 +12,8 @@ import pandas as pd
 
 router = APIRouter(prefix="/appointments", tags=["4. Appointments & Scheduling"])
 
+<<<<<<< HEAD
+=======
 
 def _frontend_appointment(record: dict) -> dict:
     """Normalize database appointment names for the React client."""
@@ -30,6 +32,7 @@ def _frontend_appointment(record: dict) -> dict:
     }
     return normalized
 
+>>>>>>> 57e9732 (Final commit after PP2)
 class BookAppointmentRequest(BaseModel):
     patient_email: EmailStr
     doctor_info_str: str  # Format: "Dr. Name | Speciality | City | email@example.com"
@@ -65,14 +68,22 @@ def api_book_appointment(req: BookAppointmentRequest):
 def api_get_patient_appointments(patient_email: str):
     user_session = {"email": patient_email, "role": "Patient"}
     df = fetch_patient_appointments(user_session)
+<<<<<<< HEAD
+    records = df.to_dict(orient="records") if isinstance(df, pd.DataFrame) else []
+=======
     records = [_frontend_appointment(record) for record in df.to_dict(orient="records")] if isinstance(df, pd.DataFrame) else []
+>>>>>>> 57e9732 (Final commit after PP2)
     return {"status": "success", "count": len(records), "appointments": records}
 
 @router.get("/doctor/{doctor_email}")
 def api_get_doctor_appointments(doctor_email: str):
     user_session = {"email": doctor_email, "role": "Doctor"}
     df = fetch_doctor_appointment_requests(user_session)
+<<<<<<< HEAD
+    records = df.to_dict(orient="records") if isinstance(df, pd.DataFrame) else []
+=======
     records = [_frontend_appointment(record) for record in df.to_dict(orient="records")] if isinstance(df, pd.DataFrame) else []
+>>>>>>> 57e9732 (Final commit after PP2)
     return {"status": "success", "count": len(records), "appointments": records}
 
 @router.patch("/status")

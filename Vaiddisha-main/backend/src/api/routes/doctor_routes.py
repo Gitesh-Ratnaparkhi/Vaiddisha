@@ -20,8 +20,13 @@ def search_doctors(
 
     # Query without the non-existent 'id' and 'rating' columns
     query = """
+<<<<<<< HEAD
+        SELECT name, email, speciality, qualification, experience, hospital,
+               country, state, city, postal_code, phone, fee, description
+=======
          SELECT doctor_id, name, email, speciality, qualification, experience, hospital,
              area, country, state, city, postal_code, phone, fee, rating, description
+>>>>>>> 57e9732 (Final commit after PP2)
         FROM doctors
         WHERE 1=1
     """
@@ -55,7 +60,11 @@ def search_doctors(
         query += " AND postal_code ILIKE %s"
         params.append(f"%{postal_code.strip()}%")
 
+<<<<<<< HEAD
+    query += " ORDER BY name ASC LIMIT 50;"
+=======
     query += " ORDER BY rating DESC NULLS LAST, name ASC LIMIT 50;"
+>>>>>>> 57e9732 (Final commit after PP2)
 
     cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
@@ -67,14 +76,20 @@ def search_doctors(
     for idx, row in enumerate(rows):
         doctors_list.append({
             "id": row.get("email") or str(idx + 1),
+<<<<<<< HEAD
+=======
             "doctor_id": row.get("doctor_id") or "",
+>>>>>>> 57e9732 (Final commit after PP2)
             "name": row.get("name") or "Doctor",
             "email": row.get("email"),
             "speciality": row.get("speciality") or "General Physician",
             "qualification": row.get("qualification") or "MBBS",
             "experience": row.get("experience") or "5+ Years",
             "hospital": row.get("hospital") or "Private Practice",
+<<<<<<< HEAD
+=======
             "area": row.get("area") or "",
+>>>>>>> 57e9732 (Final commit after PP2)
             "country": row.get("country") or "India",
             "state": row.get("state") or "",
             "city": row.get("city") or "",
@@ -82,7 +97,11 @@ def search_doctors(
             "phone": row.get("phone") or "",
             "fee": row.get("fee") or "₹500",
             "description": row.get("description") or "",
+<<<<<<< HEAD
+            "rating": row.get("rating") or 4.8
+=======
             "rating": float(row["rating"]) if row.get("rating") is not None else None
+>>>>>>> 57e9732 (Final commit after PP2)
         })
 
     return {"status": "success", "count": len(doctors_list), "doctors": doctors_list}

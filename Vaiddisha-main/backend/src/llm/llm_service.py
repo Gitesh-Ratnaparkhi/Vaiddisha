@@ -34,7 +34,11 @@ class LLMService:
         """Calls Groq Llama 3.3 model and returns validated diagnostic response in target language."""
         try:
             client = self._get_client()
+<<<<<<< HEAD
+            model_name = os.getenv("GROK_MODEL", "llama-3.3-70b-versatile").strip()
+=======
             model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b").strip()
+>>>>>>> 57e9732 (Final commit after PP2)
 
             user_prompt = build_user_prompt(
                 symptoms=symptoms, 

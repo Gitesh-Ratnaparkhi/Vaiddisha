@@ -26,20 +26,29 @@ export interface PatientProfile {
 }
 
 export interface DoctorProfile {
+<<<<<<< HEAD
+=======
     doctor_id?: string;
+>>>>>>> 57e9732 (Final commit after PP2)
     email: string;
     name: string;
     speciality: string;
     qualification: string;
     experience: string;
     hospital: string;
+<<<<<<< HEAD
+=======
     area?: string;
+>>>>>>> 57e9732 (Final commit after PP2)
     country?: string;
     state?: string;
     city?: string;
     postal_code?: string;
     phone?: string;
     fee: string;
+<<<<<<< HEAD
+=======
     rating?: number | null;
+>>>>>>> 57e9732 (Final commit after PP2)
     description?: string;
 }

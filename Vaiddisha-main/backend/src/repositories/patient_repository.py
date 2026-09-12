@@ -10,7 +10,11 @@ class PatientRepository:
         hashed_password: str, 
         name: str, 
         gender: str, 
+<<<<<<< HEAD
+        age: int, 
+=======
         birth_year: int | None,
+>>>>>>> 57e9732 (Final commit after PP2)
         country: str,
         state: str,
         city: str,
@@ -36,10 +40,17 @@ class PatientRepository:
             # 2. Insert into patients table using email
             cursor.execute("""
                 INSERT INTO patients (
+<<<<<<< HEAD
+                    email, name, gender, age, country, state, city, postal_code, 
+                    phone, language, conditions, surgeries, allergies
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (clean_email, name, gender, age, country, state, city, postal_code, phone, language, conditions, surgeries, allergies))
+=======
                     email, name, gender, birth_year, country, state, city, postal_code,
                     phone, language, conditions, surgeries, allergies
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (clean_email, name, gender, birth_year, country, state, city, postal_code, phone, language, conditions, surgeries, allergies))
+>>>>>>> 57e9732 (Final commit after PP2)
 
             conn.commit()
             return clean_email

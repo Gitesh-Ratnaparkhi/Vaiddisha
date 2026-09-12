@@ -11,7 +11,11 @@ export interface PatientRegisterPayload {
     password: string;
     name: string;
     gender?: string;
+<<<<<<< HEAD
+    age?: number;
+=======
     birth_year?: number;
+>>>>>>> 57e9732 (Final commit after PP2)
     country?: string;
     state?: string;
     city?: string;

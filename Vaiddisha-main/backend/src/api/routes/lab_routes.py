@@ -2,7 +2,10 @@
 import os
 import shutil
 import tempfile
+<<<<<<< HEAD
+=======
 import pymupdf
+>>>>>>> 57e9732 (Final commit after PP2)
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from src.services.lab_analyzer_service import analyze_medical_document
 from src.exceptions import VaiddishaException
@@ -16,12 +19,23 @@ async def api_analyze_lab_report(
     language: str = Form("English")
 ):
     ext = os.path.splitext(file.filename or "")[-1].lower()
+<<<<<<< HEAD
+    if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
+        raise HTTPException(status_code=400, detail="Invalid file format. Upload JPG, PNG, or WEBP.")
+=======
     if ext not in [".jpg", ".jpeg", ".png", ".webp", ".pdf"]:
         raise HTTPException(status_code=400, detail="Invalid file format. Upload a JPG, PNG, WEBP image, or PDF.")
+>>>>>>> 57e9732 (Final commit after PP2)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
         shutil.copyfileobj(file.file, temp_file)
         temp_path = temp_file.name
+<<<<<<< HEAD
+
+    try:
+        result_markdown = analyze_medical_document(
+            image_path=temp_path,
+=======
     analysis_path = temp_path
 
     try:
@@ -39,6 +53,7 @@ async def api_analyze_lab_report(
 
         result_markdown = analyze_medical_document(
             image_path=analysis_path,
+>>>>>>> 57e9732 (Final commit after PP2)
             patient_notes=notes,
             target_language=language
         )
@@ -53,6 +68,10 @@ async def api_analyze_lab_report(
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if os.path.exists(temp_path):
+<<<<<<< HEAD
+            os.remove(temp_path)
+=======
             os.remove(temp_path)
         if analysis_path != temp_path and os.path.exists(analysis_path):
             os.remove(analysis_path)
+>>>>>>> 57e9732 (Final commit after PP2)

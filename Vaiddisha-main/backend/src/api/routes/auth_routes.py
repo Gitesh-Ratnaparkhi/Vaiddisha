@@ -11,7 +11,11 @@ class PatientRegisterRequest(BaseModel):
     password: str
     name: str
     gender: str = "Unspecified"
+<<<<<<< HEAD
+    age: int = 0
+=======
     birth_year: int | None = None
+>>>>>>> 57e9732 (Final commit after PP2)
     country: str = ""
     state: str = ""
     city: str = ""
@@ -49,7 +53,11 @@ class TermsAcceptRequest(BaseModel):
 def api_register_patient(req: PatientRegisterRequest):
     msg = register_patient(
         email=req.email, password=req.password, name=req.name, gender=req.gender,
+<<<<<<< HEAD
+        age=req.age, country=req.country, state=req.state, city=req.city,
+=======
         birth_year=req.birth_year, country=req.country, state=req.state, city=req.city,
+>>>>>>> 57e9732 (Final commit after PP2)
         postal_code=req.postal_code, phone=req.phone, language=req.language,
         conditions=req.conditions, surgeries=req.surgeries, allergies=req.allergies
     )

@@ -1,16 +1,26 @@
 // frontend/src/pages/SymptomChecker.tsx
+<<<<<<< HEAD
+import React, { useState, useEffect, useRef } from 'react';
+=======
 import React, { useState, useRef } from 'react';
+>>>>>>> 57e9732 (Final commit after PP2)
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { triageApi, API_BASE_URL } from '../api';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../hooks/useAuth';
 import type { TriageQuestion } from '../types';
+<<<<<<< HEAD
+import { Button } from '../components/common/Button';
+import { WelcomeHero } from '../components/common/WelcomeHero';
+import { TestimonialsSection } from '../components/common/TestimonialsSection';
+=======
 import type { DoctorProfile } from '../types';
 import { Button } from '../components/common/Button';
 import { WelcomeHero } from '../components/common/WelcomeHero';
 import { TestimonialsSection } from '../components/common/TestimonialsSection';
 import { APP_LANGUAGES } from '../constants/languages';
+>>>>>>> 57e9732 (Final commit after PP2)
 import {
     Stethoscope,
     ArrowRight,
@@ -25,6 +35,13 @@ import {
     Globe,
     Mic,
     Square,
+<<<<<<< HEAD
+    Volume2
+} from 'lucide-react';
+
+export const SymptomChecker: React.FC = () => {
+    const { t, i18n } = useTranslation();
+=======
     Building2,
     MapPin,
     Star,
@@ -33,12 +50,20 @@ import {
 
 export const SymptomChecker: React.FC = () => {
     const { i18n } = useTranslation();
+>>>>>>> 57e9732 (Final commit after PP2)
     const { user } = useAuth();
     const { showToast } = useToast();
 
     // Step state: 'input' | 'questions' | 'result'
     const [step, setStep] = useState<'input' | 'questions' | 'result'>('input');
     const [symptoms, setSymptoms] = useState('');
+<<<<<<< HEAD
+    const [targetLanguage, setTargetLanguage] = useState(i18n.language === 'hi' ? 'Hindi' : 'English');
+    const [questions, setQuestions] = useState<TriageQuestion[]>([]);
+    const [answers, setAnswers] = useState<Record<string, string>>({});
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState<{ analysis_markdown: string; pdf_download_path: string } | null>(null);
+=======
     const [targetLanguage, setTargetLanguage] = useState<string>(
         APP_LANGUAGES.find(language => language.code === i18n.language)?.reportName || 'English'
     );
@@ -50,6 +75,7 @@ export const SymptomChecker: React.FC = () => {
         pdf_download_path: string;
         recommended_doctors: DoctorProfile[];
     } | null>(null);
+>>>>>>> 57e9732 (Final commit after PP2)
 
     // Speech Recognition & Web Audio Visualizer State
     const [isListening, setIsListening] = useState(false);
@@ -59,6 +85,21 @@ export const SymptomChecker: React.FC = () => {
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const animationFrameRef = useRef<number | null>(null);
 
+<<<<<<< HEAD
+    // Keep target report language synced when global i18n changes
+    useEffect(() => {
+        setTargetLanguage(i18n.language === 'hi' ? 'Hindi' : 'English');
+    }, [i18n.language]);
+
+    const languages = [
+        { code: 'en', name: 'English (English)', langLabel: 'English', speechLang: 'en-IN' },
+        { code: 'hi', name: 'हिंदी (Hindi)', langLabel: 'Hindi', speechLang: 'hi-IN' },
+        { code: 'mr', name: 'मराठी (Marathi)', langLabel: 'Marathi', speechLang: 'mr-IN' },
+        { code: 'es', name: 'Español (Spanish)', langLabel: 'Spanish', speechLang: 'es-ES' }
+    ];
+
+=======
+>>>>>>> 57e9732 (Final commit after PP2)
     const handleLanguageSelect = (langCode: string, langName: string) => {
         i18n.changeLanguage(langCode);
         localStorage.setItem('app_lang', langCode);
@@ -122,7 +163,11 @@ export const SymptomChecker: React.FC = () => {
             checkVolume();
 
             // Setup Speech Recognition
+<<<<<<< HEAD
+            const currentLangObj = languages.find(l => l.code === i18n.language) || languages[0];
+=======
             const currentLangObj = APP_LANGUAGES.find(l => l.code === i18n.language) || APP_LANGUAGES[0];
+>>>>>>> 57e9732 (Final commit after PP2)
             const recognition = new SpeechRecognition();
             recognition.lang = currentLangObj.speechLang;
             recognition.continuous = true;
@@ -130,7 +175,11 @@ export const SymptomChecker: React.FC = () => {
 
             recognition.onstart = () => {
                 setIsListening(true);
+<<<<<<< HEAD
+                showToast(`Listening in ${currentLangObj.langLabel}... Speak now`, 'info');
+=======
                 showToast(`Listening in ${currentLangObj.reportName}... Speak now`, 'info');
+>>>>>>> 57e9732 (Final commit after PP2)
             };
 
             recognition.onresult = (event: any) => {
@@ -191,7 +240,11 @@ export const SymptomChecker: React.FC = () => {
 
         setLoading(true);
         try {
+<<<<<<< HEAD
+            const res = await triageApi.getQuestions({ symptoms });
+=======
             const res = await triageApi.getQuestions({ symptoms, target_language: targetLanguage });
+>>>>>>> 57e9732 (Final commit after PP2)
             if (res.questions && res.questions.length > 0) {
                 setQuestions(res.questions);
                 const initialAnswers: Record<string, string> = {};
@@ -236,8 +289,12 @@ export const SymptomChecker: React.FC = () => {
             if (res.status === 'success') {
                 setResult({
                     analysis_markdown: res.analysis_markdown,
+<<<<<<< HEAD
+                    pdf_download_path: res.pdf_download_path
+=======
                     pdf_download_path: res.pdf_download_path,
                     recommended_doctors: res.recommended_doctors || []
+>>>>>>> 57e9732 (Final commit after PP2)
                 });
                 setStep('result');
                 showToast('Diagnostic assessment completed!', 'success');
@@ -376,16 +433,28 @@ export const SymptomChecker: React.FC = () => {
                                     <select
                                         value={i18n.language}
                                         onChange={(e) => {
+<<<<<<< HEAD
+                                            const selected = languages.find(l => l.code === e.target.value);
+                                            if (selected) {
+                                                handleLanguageSelect(selected.code, selected.langLabel);
+=======
                                             const selected = APP_LANGUAGES.find(l => l.code === e.target.value);
                                             if (selected) {
                                                 handleLanguageSelect(selected.code, selected.reportName);
+>>>>>>> 57e9732 (Final commit after PP2)
                                             }
                                         }}
                                         className="w-full p-2.5 border border-slate-200 bg-white rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none cursor-pointer"
                                     >
+<<<<<<< HEAD
+                                        {languages.map((lang) => (
+                                            <option key={lang.code} value={lang.code}>
+                                                {lang.name}
+=======
                                         {APP_LANGUAGES.map((lang) => (
                                             <option key={lang.code} value={lang.code}>
                                                 {lang.name} ({lang.reportName})
+>>>>>>> 57e9732 (Final commit after PP2)
                                             </option>
                                         ))}
                                     </select>
@@ -581,6 +650,8 @@ export const SymptomChecker: React.FC = () => {
                                 {result.analysis_markdown}
                             </ReactMarkdown>
                         </div>
+<<<<<<< HEAD
+=======
 
                         {result.recommended_doctors.length > 0 && (
                             <section className="mt-6 border-t border-slate-100 pt-5">
@@ -622,6 +693,7 @@ export const SymptomChecker: React.FC = () => {
                                 </div>
                             </section>
                         )}
+>>>>>>> 57e9732 (Final commit after PP2)
                     </div>
 
                 </div>

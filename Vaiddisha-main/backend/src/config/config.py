@@ -9,7 +9,11 @@ XAI_API_KEY = os.getenv("GROQ_API_KEY")
 XAI_BASE_URL = "https://api.groq.com/openai/v1"
 
 # Default Model Selection (Groq Cloud)
+<<<<<<< HEAD
+GROK_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+=======
 GROK_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+>>>>>>> 57e9732 (Final commit after PP2)
 
 # Clinical Assistant Prompt Template
 GROK_SYSTEM_PROMPT = """

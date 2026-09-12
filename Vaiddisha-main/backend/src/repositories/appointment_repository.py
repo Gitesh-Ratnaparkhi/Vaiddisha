@@ -61,6 +61,14 @@ class AppointmentRepository:
         cursor = conn.cursor()
         try:
             cursor.execute("""
+<<<<<<< HEAD
+                SELECT a.id, p.name AS patient_name, a.patient_email, a.date AS appointment_date, a.slot AS time_slot, a.reason, a.status, a.created_at
+                FROM appointments a
+                JOIN patients p ON a.patient_email = p.email
+                WHERE LOWER(a.doctor_email) = %s
+                ORDER BY a.id DESC
+            """, (doctor_email.strip().lower(),))
+=======
                 SELECT a.id, d.name AS doctor_name, a.doctor_email,
                        p.name AS patient_name, a.patient_email,
                        a.date AS appointment_date, a.slot AS time_slot,
@@ -86,6 +94,7 @@ class AppointmentRepository:
                 doctor_email.strip(),
                 doctor_email.strip(),
             ))
+>>>>>>> 57e9732 (Final commit after PP2)
             rows = cursor.fetchall()
             return [dict(r) for r in rows]
         finally:

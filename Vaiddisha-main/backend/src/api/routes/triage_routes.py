@@ -9,7 +9,10 @@ router = APIRouter(prefix="/triage", tags=["2. Diagnostic Triage & Disease Predi
 
 class TriageQuestionsRequest(BaseModel):
     symptoms: str
+<<<<<<< HEAD
+=======
     target_language: str = "English"
+>>>>>>> 57e9732 (Final commit after PP2)
 
 class DiagnosticPredictionRequest(BaseModel):
     symptoms: str
@@ -22,7 +25,11 @@ def api_generate_questions(req: TriageQuestionsRequest):
     if not req.symptoms.strip():
         raise HTTPException(status_code=400, detail="Symptoms text cannot be empty.")
     
+<<<<<<< HEAD
+    triage_state = generate_triage_questions(req.symptoms)
+=======
     triage_state = generate_triage_questions(req.symptoms, req.target_language)
+>>>>>>> 57e9732 (Final commit after PP2)
     return {
         "status": "success",
         "symptoms": req.symptoms,
@@ -36,19 +43,31 @@ def api_predict_diagnosis(req: DiagnosticPredictionRequest):
         raise HTTPException(status_code=429, detail="AI Inference rate limit reached. Please wait a moment.")
 
     session = {"email": req.patient_email} if req.patient_email else None
+<<<<<<< HEAD
+    analysis_md, pdf_path = process_disease_prediction(
+        symptoms=req.symptoms,
+        user_session=session,
+        triage_answers=req.triage_answers,
+        target_language=req.target_language
+=======
     analysis_md, pdf_path, doctors = process_disease_prediction(
         symptoms=req.symptoms,
         user_session=session,
         triage_answers=req.triage_answers,
         target_language=req.target_language,
         include_doctors=True,
+>>>>>>> 57e9732 (Final commit after PP2)
     )
     return {
         "status": "success",
         "analysis_markdown": analysis_md,
+<<<<<<< HEAD
+        "pdf_download_path": pdf_path
+=======
         "pdf_download_path": pdf_path,
         "recommended_specialty": doctors[0]["speciality"] if doctors else None,
         "recommended_doctors": doctors[:3],
+>>>>>>> 57e9732 (Final commit after PP2)
     }
 
 from fastapi.responses import FileResponse

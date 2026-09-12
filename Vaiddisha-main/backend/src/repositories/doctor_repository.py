@@ -71,10 +71,14 @@ class DoctorRepository:
     def get_doctors_by_speciality(speciality: str):
         conn = get_connection()
         cursor = conn.cursor()
+<<<<<<< HEAD
+        cursor.execute("SELECT * FROM doctors WHERE LOWER(speciality) = %s", (speciality.strip().lower(),))
+=======
         cursor.execute(
             "SELECT * FROM doctors WHERE speciality ILIKE %s ORDER BY rating DESC NULLS LAST, name ASC",
             (f"%{speciality.strip()}%",),
         )
+>>>>>>> 57e9732 (Final commit after PP2)
         rows = cursor.fetchall()
         conn.close()
         return [dict(row) for row in rows]
@@ -84,6 +88,10 @@ class DoctorRepository:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
+<<<<<<< HEAD
+            "SELECT * FROM doctors WHERE LOWER(city) = %s AND LOWER(speciality) = %s",
+            (city.strip().lower(), speciality.strip().lower())
+=======
             """
             SELECT * FROM doctors
             WHERE city ILIKE %s AND speciality ILIKE %s
@@ -107,6 +115,7 @@ class DoctorRepository:
             LIMIT %s
             """,
             (city.strip(), limit),
+>>>>>>> 57e9732 (Final commit after PP2)
         )
         rows = cursor.fetchall()
         conn.close()

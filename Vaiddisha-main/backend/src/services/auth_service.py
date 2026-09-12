@@ -4,14 +4,21 @@ from src.exceptions import AuthenticationError, UserAlreadyExistsError
 from src.repositories.user_repository import user_repository
 from src.repositories.patient_repository import patient_repository
 from src.repositories.doctor_repository import doctor_repository
+<<<<<<< HEAD
+=======
 from src.services.specialist_csv_service import append_registered_doctor
+>>>>>>> 57e9732 (Final commit after PP2)
 
 def register_patient(
     email: str, 
     password: str, 
     name: str, 
     gender: str, 
+<<<<<<< HEAD
+    age: int, 
+=======
     birth_year: int | None,
+>>>>>>> 57e9732 (Final commit after PP2)
     country: str, 
     state: str, 
     city: str, 
@@ -35,7 +42,11 @@ def register_patient(
         hashed_pw = hash_password(password.strip())
 
         patient_repository.create_patient_account(
+<<<<<<< HEAD
+            clean_email, hashed_pw, name, gender, age, 
+=======
             clean_email, hashed_pw, name, gender, birth_year,
+>>>>>>> 57e9732 (Final commit after PP2)
             country, state, city, postal_code, 
             phone, language, conditions, surgeries, allergies
         )
@@ -85,6 +96,8 @@ def register_doctor(
             clean_email, hashed_pw, name, speciality, qualification, 
             experience, hospital, country, state, city, postal_code, phone, fee, description
         )
+<<<<<<< HEAD
+=======
         append_registered_doctor(
             email=clean_email,
             name=name,
@@ -100,6 +113,7 @@ def register_doctor(
             fee=fee,
             description=description,
         )
+>>>>>>> 57e9732 (Final commit after PP2)
         return f"🎉 Doctor account registered for **Dr. {name}**! You can now log in with {clean_email}."
 
     except Exception as e:

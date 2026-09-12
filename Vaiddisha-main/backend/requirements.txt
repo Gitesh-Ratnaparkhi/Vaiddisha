@@ -13,8 +13,11 @@ groq>=1.0.0
 # Environment & Configuration Management
 # ==========================================
 python-dotenv>=1.0.0
+<<<<<<< HEAD
+=======
 PyMuPDF>=1.26.0
 Pillow>=10.0.0
+>>>>>>> 57e9732 (Final commit after PP2)
 
 # ==========================================
 # Data Validation & Security / Hashing

@@ -84,8 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     email: payload.email,
                     password: payload.password,
                     name: payload.name,
+<<<<<<< HEAD
+=======
                     birth_year: payload.birth_year,
                     gender: payload.gender,
+>>>>>>> 57e9732 (Final commit after PP2)
                     city: payload.city,
                 });
             }

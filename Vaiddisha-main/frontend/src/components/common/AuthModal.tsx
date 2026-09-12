@@ -36,8 +36,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [city, setCity] = useState('');
+<<<<<<< HEAD
+=======
     const [birthYear, setBirthYear] = useState('');
     const [gender, setGender] = useState('');
+>>>>>>> 57e9732 (Final commit after PP2)
 
     // Doctor-Specific Fields
     const [speciality, setSpeciality] = useState('General Physician');
@@ -64,8 +67,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                     email,
                     password,
                     name,
+<<<<<<< HEAD
+=======
                     birth_year: birthYear ? Number(birthYear) : undefined,
                     gender: gender || 'Unspecified',
+>>>>>>> 57e9732 (Final commit after PP2)
                     city,
                     role
                 };
@@ -177,6 +183,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                                     </div>
                                 </div>
 
+<<<<<<< HEAD
+=======
                                 {role === 'patient' && (
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
@@ -208,6 +216,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                                     </div>
                                 )}
 
+>>>>>>> 57e9732 (Final commit after PP2)
                                 {/* Doctor-Specific Form Fields */}
                                 {role === 'doctor' && (
                                     <>

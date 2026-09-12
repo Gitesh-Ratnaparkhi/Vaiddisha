@@ -18,7 +18,10 @@ dependencies = [
     "psycopg2-binary>=2.9.12",
     "python-dotenv>=1.2.2",
     "python-multipart>=0.0.32",
+<<<<<<< HEAD
+=======
     "PyMuPDF>=1.26.0",
+>>>>>>> 57e9732 (Final commit after PP2)
     "reportlab>=5.0.0",
     "uvicorn>=0.52.3",
 ]

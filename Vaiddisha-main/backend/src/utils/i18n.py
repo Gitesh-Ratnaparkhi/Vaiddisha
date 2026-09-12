@@ -4,6 +4,9 @@ LANGUAGES = {
     "English": "en",
     "Hindi (हिन्दी)": "hi",
     "Marathi (मराठी)": "mr",
+<<<<<<< HEAD
+    "Spanish (Español)": "es"
+=======
     "Bengali (বাংলা)": "bn",
     "Telugu (తెలుగు)": "te",
     "Tamil (தமிழ்)": "ta",
@@ -11,6 +14,7 @@ LANGUAGES = {
     "Kannada (ಕನ್ನಡ)": "kn",
     "Urdu (اردو)": "ur",
     "Punjabi (ਪੰਜਾਬੀ)": "pa"
+>>>>>>> 57e9732 (Final commit after PP2)
 }
 
 UI_STRINGS = {

@@ -2,11 +2,16 @@
 import os
 import tempfile
 from datetime import datetime
+<<<<<<< HEAD
+=======
 from xml.sax.saxutils import escape
+>>>>>>> 57e9732 (Final commit after PP2)
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+<<<<<<< HEAD
+=======
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
@@ -40,6 +45,7 @@ def _register_multilingual_font(target_language: str = "English") -> tuple[str, 
     except Exception as exc:
         print(f"[PDF Font Warning]: Unable to load multilingual font: {exc}")
         return "Helvetica", "Helvetica-Bold", "Helvetica-Oblique"
+>>>>>>> 57e9732 (Final commit after PP2)
 
 def generate_medical_report_pdf(
     patient_name: str,
@@ -47,10 +53,14 @@ def generate_medical_report_pdf(
     symptoms: str,
     diagnosis,
     doctors: list,
+<<<<<<< HEAD
+    safety_res
+=======
     safety_res,
     age: int | str | None = None,
     gender: str | None = None,
     target_language: str = "English",
+>>>>>>> 57e9732 (Final commit after PP2)
 ) -> str:
     """
     Generates an official, formatted PDF clinical report and returns the local file path.
@@ -69,7 +79,10 @@ def generate_medical_report_pdf(
     )
 
     styles = getSampleStyleSheet()
+<<<<<<< HEAD
+=======
     regular_font, bold_font, italic_font = _register_multilingual_font(target_language)
+>>>>>>> 57e9732 (Final commit after PP2)
     
     # Palette Definition
     PRIMARY_COLOR = colors.HexColor("#0f172a")    # Slate Dark
@@ -81,27 +94,45 @@ def generate_medical_report_pdf(
     title_style = ParagraphStyle(
         'DocTitle',
         parent=styles['Normal'],
+<<<<<<< HEAD
+        fontName='Helvetica-Bold',
+        fontSize=20,
+        textColor=PRIMARY_COLOR,
+        spaceAfter=4
+=======
         fontName=bold_font,
         fontSize=20,
         textColor=PRIMARY_COLOR,
         leading=24,
         spaceAfter=8
+>>>>>>> 57e9732 (Final commit after PP2)
     )
     
     subtitle_style = ParagraphStyle(
         'DocSubtitle',
         parent=styles['Normal'],
+<<<<<<< HEAD
+        fontName='Helvetica',
+        fontSize=10,
+        textColor=TEAL_COLOR,
+        spaceAfter=15
+=======
         fontName=regular_font,
         fontSize=10,
         leading=14,
         textColor=TEAL_COLOR,
         spaceAfter=18
+>>>>>>> 57e9732 (Final commit after PP2)
     )
 
     section_heading = ParagraphStyle(
         'SectionHeading',
         parent=styles['Normal'],
+<<<<<<< HEAD
+        fontName='Helvetica-Bold',
+=======
         fontName=bold_font,
+>>>>>>> 57e9732 (Final commit after PP2)
         fontSize=11,
         textColor=PRIMARY_COLOR,
         spaceBefore=12,
@@ -111,7 +142,11 @@ def generate_medical_report_pdf(
     body_style = ParagraphStyle(
         'BodyText',
         parent=styles['Normal'],
+<<<<<<< HEAD
+        fontName='Helvetica',
+=======
         fontName=regular_font,
+>>>>>>> 57e9732 (Final commit after PP2)
         fontSize=9,
         leading=13,
         textColor=TEXT_COLOR,
@@ -121,7 +156,11 @@ def generate_medical_report_pdf(
     alert_style = ParagraphStyle(
         'AlertText',
         parent=styles['Normal'],
+<<<<<<< HEAD
+        fontName='Helvetica-Bold',
+=======
         fontName=bold_font,
+>>>>>>> 57e9732 (Final commit after PP2)
         fontSize=9,
         leading=13,
         textColor=ALERT_COLOR,
@@ -131,18 +170,28 @@ def generate_medical_report_pdf(
     story = []
 
     # 1. Header Banner
+<<<<<<< HEAD
+    story.append(Paragraph("🩺 VAIDDISHA AI — CLINICAL TRIAGE REPORT", title_style))
+=======
     story.append(Paragraph("VAIDDISHA AI - CLINICAL TRIAGE REPORT", title_style))
+>>>>>>> 57e9732 (Final commit after PP2)
     story.append(Paragraph("Multilingual AI Clinical Decision-Support & Patient Diagnostic Summary", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=1.5, color=TEAL_COLOR, spaceAfter=12))
 
     # 2. Patient Profile & Metadata Table
     current_date = datetime.now().strftime("%B %d, %Y")
     patient_info_data = [
+<<<<<<< HEAD
+        [Paragraph("<b>Patient Name:</b>", body_style), Paragraph(patient_name or "Anonymous Patient", body_style),
+         Paragraph("<b>Date:</b>", body_style), Paragraph(current_date, body_style)],
+        [Paragraph("<b>Email:</b>", body_style), Paragraph(email or "N/A", body_style),
+=======
         [Paragraph("<b>Patient Name:</b>", body_style), Paragraph(escape(patient_name or "Anonymous Patient"), body_style),
          Paragraph("<b>Date:</b>", body_style), Paragraph(current_date, body_style)],
         [Paragraph("<b>Age:</b>", body_style), Paragraph(escape(str(age) if age not in (None, "", 0) else "Not provided"), body_style),
          Paragraph("<b>Gender:</b>", body_style), Paragraph(escape(gender or "Not provided"), body_style)],
         [Paragraph("<b>Email:</b>", body_style), Paragraph(escape(email or "N/A"), body_style),
+>>>>>>> 57e9732 (Final commit after PP2)
          Paragraph("<b>Urgency Level:</b>", body_style), Paragraph(f"<b>{diagnosis.urgency_level}</b>", body_style)]
     ]
     
@@ -158,23 +207,41 @@ def generate_medical_report_pdf(
 
     # 3. Reported Symptoms
     story.append(Paragraph("1. Reported Symptoms & Presenting Complaints", section_heading))
+<<<<<<< HEAD
+    story.append(Paragraph(symptoms.strip(), body_style))
+=======
     story.append(Paragraph(escape(symptoms.strip()), body_style))
+>>>>>>> 57e9732 (Final commit after PP2)
     story.append(Spacer(1, 8))
 
     # 4. Patient Safety & Emergency Alerts
     if not safety_res.is_safe or diagnosis.emergency_warning:
+<<<<<<< HEAD
+        story.append(Paragraph("⚠️ Patient Safety & Emergency Alerts", section_heading))
+        if diagnosis.emergency_warning:
+            story.append(Paragraph(f"<b>EMERGENCY PROTOCOL:</b> {diagnosis.emergency_warning.strip()}", alert_style))
+        if not safety_res.is_safe:
+            for w in safety_res.warnings:
+                story.append(Paragraph(f"• <b>[{w.category}]</b> ({w.severity}): {w.message.strip()}", alert_style))
+=======
         story.append(Paragraph("Patient Safety & Emergency Alerts", section_heading))
         if diagnosis.emergency_warning:
             story.append(Paragraph(f"<b>EMERGENCY PROTOCOL:</b> {escape(diagnosis.emergency_warning.strip())}", alert_style))
         if not safety_res.is_safe:
             for w in safety_res.warnings:
                 story.append(Paragraph(f"<b>[{escape(w.category)}]</b> ({escape(w.severity)}): {escape(w.message.strip())}", alert_style))
+>>>>>>> 57e9732 (Final commit after PP2)
         story.append(Spacer(1, 8))
 
     # 5. Diagnostic Assessment Summary
     story.append(Paragraph("2. AI Clinical Assessment & Triage Summary", section_heading))
+<<<<<<< HEAD
+    story.append(Paragraph(diagnosis.summary.strip(), body_style))
+    story.append(Paragraph(f"<b>Recommended Specialty:</b> {diagnosis.recommended_specialty.strip()}", body_style))
+=======
     story.append(Paragraph(escape(diagnosis.summary.strip()), body_style))
     story.append(Paragraph(f"<b>Recommended Specialty:</b> {escape(diagnosis.recommended_specialty.strip())}", body_style))
+>>>>>>> 57e9732 (Final commit after PP2)
     story.append(Spacer(1, 8))
 
     # 6. Suspected Conditions Table
@@ -182,9 +249,15 @@ def generate_medical_report_pdf(
     cond_table_data: list[list[str | Paragraph]] = [["Condition", "Probability", "Clinical Rationale"]]
     for cond in diagnosis.possible_conditions:
         cond_table_data.append([
+<<<<<<< HEAD
+            Paragraph(f"<b>{cond.name.strip()}</b>", body_style),
+            Paragraph(cond.probability.strip(), body_style),
+            Paragraph(cond.explanation.strip(), body_style)
+=======
             Paragraph(f"<b>{escape(cond.name.strip())}</b>", body_style),
             Paragraph(escape(cond.probability.strip()), body_style),
             Paragraph(escape(cond.explanation.strip()), body_style)
+>>>>>>> 57e9732 (Final commit after PP2)
         ])
 
     cond_table = Table(cond_table_data, colWidths=[130, 80, 320])
@@ -204,10 +277,17 @@ def generate_medical_report_pdf(
         doc_table_data: list[list[str | Paragraph]] = [["Doctor Name", "Specialty", "Hospital / Location", "Contact & Fee"]]
         for doc_item in doctors[:3]:
             doc_table_data.append([
+<<<<<<< HEAD
+                Paragraph(f"Dr. {doc_item['name']}<br/><font size=7 color='#64748b'>{doc_item.get('qualification', '')}</font>", body_style),
+                Paragraph(doc_item['speciality'], body_style),
+                Paragraph(f"{doc_item['hospital']}, {doc_item['city']}", body_style),
+                Paragraph(f"Phone: {doc_item['phone']}<br/>Fee: {doc_item['fee']}", body_style)
+=======
                 Paragraph(f"Dr. {escape(doc_item['name'])}<br/><font size=7 color='#64748b'>{escape(doc_item.get('qualification', ''))}</font>", body_style),
                 Paragraph(escape(doc_item['speciality']), body_style),
                 Paragraph(f"{escape(doc_item['hospital'])}, {escape(doc_item['city'])}", body_style),
                 Paragraph(f"Phone: {escape(doc_item['phone'])}<br/>Fee: {escape(doc_item['fee'])}", body_style)
+>>>>>>> 57e9732 (Final commit after PP2)
             ])
         doc_table = Table(doc_table_data, colWidths=[130, 110, 170, 120])
         doc_table.setStyle(TableStyle([
@@ -227,7 +307,11 @@ def generate_medical_report_pdf(
     disclaimer_style = ParagraphStyle(
         'Disclaimer', 
         parent=styles['Normal'], 
+<<<<<<< HEAD
+        fontName='Helvetica-Oblique', 
+=======
         fontName=italic_font, 
+>>>>>>> 57e9732 (Final commit after PP2)
         fontSize=7, 
         leading=10, 
         textColor=colors.HexColor("#64748b")

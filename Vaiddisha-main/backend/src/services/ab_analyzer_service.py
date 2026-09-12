@@ -65,7 +65,11 @@ def analyze_medical_document(image_path: str, patient_notes: str = "", target_la
         # Use Groq Vision capable model
         # pyrefly: ignore [no-matching-overload]
         response = client.chat.completions.create(
+<<<<<<< HEAD
+            model=os.getenv("GROQ_VISION_MODEL", "llama-3.2-11b-vision-preview"),
+=======
             model=os.getenv("GROQ_VISION_MODEL", "qwen/qwen3.6-27b"),
+>>>>>>> 57e9732 (Final commit after PP2)
             messages=[
                 {"role": "system", "content": VISION_SYSTEM_PROMPT},
                 {"role": "user", "content": user_content}

@@ -1,9 +1,13 @@
 // frontend/src/components/layout/Navbar.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+<<<<<<< HEAD
+import { User, LogOut, ChevronDown, ShieldCheck, Stethoscope } from 'lucide-react';
+=======
 import { useTranslation } from 'react-i18next';
 import { APP_LANGUAGES } from '../../constants/languages';
 import { User, LogOut, ChevronDown, ShieldCheck, Stethoscope, Globe } from 'lucide-react';
+>>>>>>> 57e9732 (Final commit after PP2)
 
 export type TabType = 'triage' | 'lab' | 'doctors' | 'appointments' | 'profile';
 
@@ -14,7 +18,10 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
     const { user, logout } = useAuth();
+<<<<<<< HEAD
+=======
     const { i18n } = useTranslation();
+>>>>>>> 57e9732 (Final commit after PP2)
     const isDoctor = user?.role?.toLowerCase() === 'doctor';
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -99,6 +106,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
                 {/* Right: Translate & Profile Dropdown */}
                 <div className="flex items-center gap-3">
+<<<<<<< HEAD
+                    <div id="google_translate_element" className="notranslate-icon text-xs"></div>
+=======
                     <label className="flex items-center gap-1.5 text-xs text-slate-500" title="Website language">
                         <Globe className="w-3.5 h-3.5" />
                         <select
@@ -126,6 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                         </select>
                     </label>
                     <div id="google_translate_element" className="hidden" aria-hidden="true"></div>
+>>>>>>> 57e9732 (Final commit after PP2)
 
                     {/* Profile Dropdown Menu */}
                     <div className="relative" ref={dropdownRef}>

@@ -2,6 +2,10 @@
 import React, { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { useToast } from '../context/ToastContext';
+<<<<<<< HEAD
+import { useAuth } from '../hooks/useAuth';
+=======
+>>>>>>> 57e9732 (Final commit after PP2)
 import { API_BASE_URL, labApi } from '../api';
 import { Button } from '../components/common/Button';
 import {
@@ -12,12 +16,16 @@ import {
     Download,
     AlertCircle,
     Trash2,
+<<<<<<< HEAD
+    Sparkles
+=======
     Sparkles,
     CheckCircle2,
     ClipboardCheck,
     Stethoscope,
     ChevronDown,
     ChevronUp
+>>>>>>> 57e9732 (Final commit after PP2)
 } from 'lucide-react';
 
 interface BiomarkerMetric {
@@ -30,12 +38,19 @@ interface BiomarkerMetric {
 }
 
 export const LabAnalyzer: React.FC = () => {
+<<<<<<< HEAD
+    const { user } = useAuth();
+=======
+>>>>>>> 57e9732 (Final commit after PP2)
     const { showToast } = useToast();
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
+<<<<<<< HEAD
+=======
     const [showFullReview, setShowFullReview] = useState(false);
+>>>>>>> 57e9732 (Final commit after PP2)
     const [analysisResult, setAnalysisResult] = useState<{
         markdown: string;
         pdfPath?: string;
@@ -47,7 +62,11 @@ export const LabAnalyzer: React.FC = () => {
     // File Drop / Selection Handlers
     const handleFileChange = (file: File) => {
         if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
+<<<<<<< HEAD
+            showToast('Please upload a valid image (PNG, JPG) or medical PDF document.', 'error');
+=======
             showToast('Please upload a valid lab report image (PNG, JPG, JPEG, WEBP) or PDF.', 'error');
+>>>>>>> 57e9732 (Final commit after PP2)
             return;
         }
 
@@ -96,19 +115,41 @@ export const LabAnalyzer: React.FC = () => {
             const res = await labApi.analyzeReport(selectedFile);
 
             if (res.status === 'success') {
+<<<<<<< HEAD
+                // Fallback sample parsed metrics if backend doesn't return custom metrics array
+                const parsedMetrics: BiomarkerMetric[] = res.metrics || [
+                    { name: 'HbA1c (Glycated Hemoglobin)', value: 6.8, unit: '%', referenceRange: '4.0 - 5.6 %', status: 'borderline', progressPercent: 68 },
+                    { name: 'Fasting Blood Glucose', value: 142, unit: 'mg/dL', referenceRange: '70 - 99 mg/dL', status: 'critical', progressPercent: 88 },
+                    { name: 'Total Cholesterol', value: 185, unit: 'mg/dL', referenceRange: '< 200 mg/dL', status: 'normal', progressPercent: 45 },
+                    { name: 'Serum Creatinine', value: 0.95, unit: 'mg/dL', referenceRange: '0.7 - 1.3 mg/dL', status: 'normal', progressPercent: 35 },
+                    { name: 'Platelet Count', value: '240,000', unit: '/mcL', referenceRange: '150,000 - 450,000', status: 'normal', progressPercent: 50 },
+                ];
+
+                setAnalysisResult({
+                    markdown: res.analysis_markdown || res.text || 'Clinical analysis complete.',
+                    pdfPath: res.pdf_download_path,
+                    metrics: parsedMetrics
+                });
+=======
                 setAnalysisResult({
                     markdown: res.analysis_markdown || res.text || 'Clinical analysis complete.',
                     pdfPath: res.pdf_download_path,
                     metrics: Array.isArray(res.metrics) ? res.metrics : undefined
                 });
                 setShowFullReview(false);
+>>>>>>> 57e9732 (Final commit after PP2)
                 showToast('Lab report analyzed successfully!', 'success');
             } else {
                 throw new Error(res.message || 'Failed to extract data from the lab report.');
             }
+<<<<<<< HEAD
+        } catch (err: any) {
+            showToast(err.message || 'OCR processing failed. Ensure the report image is clear.', 'error');
+=======
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'OCR processing failed. Ensure the report image is clear.';
             showToast(message, 'error');
+>>>>>>> 57e9732 (Final commit after PP2)
         } finally {
             setIsScanning(false);
         }
@@ -151,7 +192,11 @@ export const LabAnalyzer: React.FC = () => {
                             <input
                                 ref={fileInputRef}
                                 type="file"
+<<<<<<< HEAD
+                                accept="image/*,application/pdf"
+=======
                                 accept="image/png,image/jpeg,image/webp,application/pdf"
+>>>>>>> 57e9732 (Final commit after PP2)
                                 className="hidden"
                                 onChange={(e) => e.target.files?.[0] && handleFileChange(e.target.files[0])}
                             />
@@ -212,7 +257,11 @@ export const LabAnalyzer: React.FC = () => {
                                             Click to upload <span className="text-teal-600 font-semibold">or drag and drop</span>
                                         </p>
                                         <p className="text-[11px] text-slate-400 mt-0.5">
+<<<<<<< HEAD
+                                            Supports JPG, PNG, WEBP or Medical PDF (Max 10MB)
+=======
                                             Supports JPG, PNG, JPEG, WEBP or PDF (first page scanned, Max 10MB)
+>>>>>>> 57e9732 (Final commit after PP2)
                                         </p>
                                     </div>
                                 </div>
@@ -246,6 +295,31 @@ export const LabAnalyzer: React.FC = () => {
                 {/* Right Column: Visual Biomarker Range Meters & Structured Clinical Analysis */}
                 <div className="lg:col-span-7 space-y-5">
                     {analysisResult ? (
+<<<<<<< HEAD
+                        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-6 animate-fade-in">
+                            {/* Report Header */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                                <div>
+                                    <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                                        <Activity className="w-5 h-5 text-teal-600" />
+                                        Biomarker Range Meters
+                                    </h3>
+                                    <p className="text-[11px] text-slate-400">Automated reference range classification</p>
+                                </div>
+
+                                {analysisResult.pdfPath && (
+                                    <a
+                                        href={`${API_BASE_URL}/triage/download?file_path=${encodeURIComponent(analysisResult.pdfPath)}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 rounded-xl text-xs font-semibold transition"
+                                    >
+                                        <Download className="w-3.5 h-3.5" /> Download Report
+                                    </a>
+                                )}
+                            </div>
+
+=======
                         <div className="space-y-5 animate-fade-in">
                             {/* Report Header */}
                             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 p-6 sm:p-7 text-white shadow-lg shadow-slate-900/10">
@@ -294,6 +368,7 @@ export const LabAnalyzer: React.FC = () => {
                                     </div>
                                 </div>
 
+>>>>>>> 57e9732 (Final commit after PP2)
                             {/* Visual Biomarker Meters */}
                             {analysisResult.metrics && analysisResult.metrics.length > 0 && (
                                 <div className="space-y-4">
@@ -347,6 +422,25 @@ export const LabAnalyzer: React.FC = () => {
                             )}
 
                             {/* Formatted Markdown Clinical Summary */}
+<<<<<<< HEAD
+                            <div className="border-t border-slate-100 pt-5 space-y-3">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                    Detailed AI Clinical Evaluation
+                                </h4>
+
+                                <div className="text-slate-700 text-xs leading-relaxed space-y-3">
+                                    <ReactMarkdown
+                                        components={{
+                                            h1: ({ children }) => <h1 className="text-base font-bold text-slate-900 border-b pb-1.5 mt-3">{children}</h1>,
+                                            h2: ({ children }) => <h2 className="text-sm font-bold text-slate-900 mt-3">{children}</h2>,
+                                            h3: ({ children }) => <h3 className="text-xs font-bold text-slate-800 mt-2">{children}</h3>,
+                                            p: ({ children }) => <p className="text-slate-600 leading-relaxed mb-2">{children}</p>,
+                                            strong: ({ children }) => <strong className="font-bold text-slate-900">{children}</strong>,
+                                            ul: ({ children }) => <ul className="list-disc pl-4 space-y-1 my-1 text-slate-600">{children}</ul>,
+                                            li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                                            blockquote: ({ children }) => (
+                                                <blockquote className="p-3 my-2 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-900 font-medium">
+=======
                             <div className="rounded-2xl border border-slate-200 bg-[#fffdfa] p-5 sm:p-6 shadow-[0_8px_30px_-24px_rgba(15,23,42,0.45)]">
                                 <div className="mb-5 flex items-start gap-3 border-b border-slate-200/80 pb-4">
                                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700 ring-1 ring-amber-100">
@@ -379,11 +473,16 @@ export const LabAnalyzer: React.FC = () => {
                                             td: ({ children }) => <td className="px-3 py-2.5 align-top text-slate-600">{children}</td>,
                                             blockquote: ({ children }) => (
                                                 <blockquote className="my-4 rounded-r-xl border-l-4 border-amber-500 bg-amber-50 p-4 text-xs font-medium leading-6 text-amber-900">
+>>>>>>> 57e9732 (Final commit after PP2)
                                                     {children}
                                                 </blockquote>
                                             ),
                                             code: ({ children }) => (
+<<<<<<< HEAD
+                                                <code className="px-1.5 py-0.5 bg-teal-50 text-teal-700 rounded-md font-mono text-[11px] border border-teal-100">
+=======
                                                 <code className="rounded-md border border-teal-100 bg-teal-50 px-1.5 py-0.5 font-mono text-[11px] text-teal-700">
+>>>>>>> 57e9732 (Final commit after PP2)
                                                     {children}
                                                 </code>
                                             )
@@ -391,6 +490,9 @@ export const LabAnalyzer: React.FC = () => {
                                     >
                                         {analysisResult.markdown}
                                     </ReactMarkdown>
+<<<<<<< HEAD
+                                </div>
+=======
                                     {!showFullReview && (
                                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#fffdfa] via-[#fffdfa]/90 to-transparent" />
                                     )}
@@ -409,6 +511,7 @@ export const LabAnalyzer: React.FC = () => {
                                     <span>This AI-generated interpretation is for educational support and does not replace advice from a qualified healthcare professional.</span>
                                 </div>
                             </div>
+>>>>>>> 57e9732 (Final commit after PP2)
                             </div>
                         </div>
                     ) : (
